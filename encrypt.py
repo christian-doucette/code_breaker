@@ -1,15 +1,12 @@
-import re
-
 # returns True if a given character is an uppercase letter
 def is_uppercase_letter(c: str) -> bool:
     return (65 <= ord(c)) and (ord(c) < 91)
 
 
 
-# maps letters to uppercase and removes non-space characters
+# maps letters to uppercase
 def clean_text(input_text: str) -> str:
     cleaned_text = input_text.upper()                    # maps to uppercase
-    cleaned_text = re.sub("[^A-Z ]", "", cleaned_text)   # removes all non letter characters
     return cleaned_text
 
 
