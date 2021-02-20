@@ -1,0 +1,1 @@
+In this project, I will create cryptography functions for Caesar Cipher, Substitution Cipher, and Vignere Cipher. I will then attempt to create methods to break these with NLP. This project is still in the early stages, so check back in a bit to see where I am with it!
