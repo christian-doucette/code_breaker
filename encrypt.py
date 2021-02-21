@@ -98,7 +98,7 @@ def encrypt_vignere(plain_text: str, keyword: str) -> str:
         if is_uppercase_letter(character):
             offset = offsets[loc_in_keyword]
             cipher_text += rotate_letter(character, offset)
-            loc_in_keyword = (loc_in_keyword + 1) % len(offsets)
+            loc_in_keyword = (loc_in_keyword + 1) % len(keyword)
 
         else:
             cipher_text += character
