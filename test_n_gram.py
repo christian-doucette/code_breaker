@@ -1,5 +1,5 @@
 import math
-import numpy as np
+import json
 import encrypt
 
 
@@ -25,8 +25,8 @@ def calculate_perplexity(text: str, n: int):
         #print(f"ids: {letter_ids}")
 
         for i in range(0, len(word) + n - 1):
-            this_ids = tuple(letter_ids[i:i+5])
-            perplexity_log += math.log(n_grams[this_ids] + 1, 10)
+            this_ids = str(tuple(letter_ids[i:i+5]))
+            perplexity_log += math.log(n_grams.get(this_ids, 0) + 1, 10)
             #print(f'Checking {i} to {i+5} in {word}: {this_ids}')
 
     return perplexity_log
@@ -54,8 +54,11 @@ def break_caesar(cipher_text: str, n: int) -> str:
 
 
 # Loads trained n_gram model
-n_grams = np.load('trained_model/trained_ngram.npy')
-n_val = len(n_grams.shape)
+with open('trained_model/trained_ngram.json') as json_file:
+    n_grams = json.load(json_file)
+
+# gets value of n for n-gram by looking at length of first key
+n_val = len(next(iter(n_grams)))
 
 
-print(f'BEST GUESS: {break_caesar("IMKLX QMPIW LMKL", n_val)}')
+print(f'BEST GUESS: {break_caesar("XCMDNODVI YJPXZOOZ", n_val)}')

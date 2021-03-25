@@ -1,6 +1,5 @@
 import csv
-import numpy as np
-
+import json
 
 
 # assumes text is just lowercase letters
@@ -22,7 +21,7 @@ def to_ids(text, n_val):
 
 n = 5
 k = 28 # total number of symbols
-n_grams = np.zeros(shape = n * (k,), dtype=int)
+n_grams = dict() #np.zeros(shape = n * (k,), dtype=int)
 
 # Dataset has 333333 words with frequencies
 with open('data/unigram_freq.csv', newline='') as f:
@@ -34,12 +33,11 @@ for word, freq in parsed_csv:
     word_ids = to_ids(word, 5)
 
     for i in range(0, len(word) + 5 - 1):
-        this_ids = tuple(word_ids[i:i+5])
-        n_grams[this_ids] += int(freq)
+        this_ids = str(tuple(word_ids[i:i+5]))
+        n_grams[this_ids] = n_grams.get(this_ids, 0) + int(freq)
 
 
 
-np.save('trained_model/trained_ngram.npy', n_grams)
-
-
-print(f"Max value in ngrams: {np.amax(n_grams)}")
+# Saves dict to file
+with open('trained_model/trained_ngram.json', 'w') as fp:
+    json.dump(n_grams, fp, indent=4)
