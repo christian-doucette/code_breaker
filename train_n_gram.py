@@ -1,7 +1,5 @@
 import csv
-import math
 import numpy as np
-import encrypt
 
 
 
@@ -13,12 +11,7 @@ def to_ids(text, n_val):
     return start_tokens + text_letter_tokens + end_tokens
 
 
-# assumes text is just uppercase letters
-def to_ids_uppercase(text, n_val):
-    start_tokens       = (n_val-1) * [26]
-    text_letter_tokens = [ord(letter) - 65 for letter in text]
-    end_tokens         = (n_val-1) * [27]
-    return start_tokens + text_letter_tokens + end_tokens
+
 
 
 
@@ -46,41 +39,7 @@ for word, freq in parsed_csv:
 
 
 
+np.save('trained_model/trained_ngram.npy', n_grams)
+
+
 print(f"Max value in ngrams: {np.amax(n_grams)}")
-
-
-# assumes it is all uppercase letters
-def calculate_perplexity(text, n_val):
-    perplexity_log = 0
-
-    text_words = text.split()
-    for word in text_words:
-        #print(f"word: {word}")
-        letter_ids = to_ids_uppercase(word, n_val)
-        #print(f"ids: {letter_ids}")
-
-        for i in range(0, len(word) + n_val - 1):
-            this_ids = tuple(letter_ids[i:i+5])
-            perplexity_log += math.log(n_grams[this_ids] + 1, 10)
-            #print(f'Checking {i} to {i+5} in {word}: {this_ids}')
-
-    return perplexity_log
-
-
-"""
-print(calculate_perplexity("HELLO MY", 5))
-print(calculate_perplexity("JELLO", 5))
-print(calculate_perplexity("XXZXX", 5))
-"""
-
-
-best_guess = ""
-best_guess_perplex = 0
-for i in range(26):
-    test_rot = encrypt.encrypt_caesar("YJXY RJXXFLJ YT XJJ NK RD RJYMTI NX BTWPNSL", i)
-    print(f'Test: {test_rot}, perplexity: {calculate_perplexity(test_rot, 5)}')
-    if best_guess_perplex < calculate_perplexity(test_rot, 5):
-        best_guess_perplex = calculate_perplexity(test_rot, 5)
-        best_guess = test_rot
-
-print(f"BEST GUESS: {best_guess}")
