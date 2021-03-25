@@ -21,7 +21,7 @@ def to_ids(text, n_val):
 
 n = 5
 k = 28 # total number of symbols
-n_grams = dict() #np.zeros(shape = n * (k,), dtype=int)
+n_grams = {'n_val': n} #stores value of n for n-gram as metadata in model
 
 # Dataset has 333333 words with frequencies
 with open('data/unigram_freq.csv', newline='') as f:
