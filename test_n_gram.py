@@ -59,7 +59,8 @@ with open('trained_model/trained_ngram.json') as json_file:
 
 
 # gets n_val for n gram - getting from model metadata
-n_val = n_grams['n_val']
+n_val = len(eval(next(iter(n_grams))))
+print(f'n_val: {n_val}')
 
 # Tests it by attempting to break a caesar cipher
-print(f'BEST GUESS: {break_caesar("LJSBO CBBLLPOFO", n_val)}')
+print(f'BEST GUESS: {break_caesar("XFKLFDJR", n_val)}')
