@@ -1,6 +1,6 @@
 import csv
 import math
-#import numpy as np
+import numpy as np
 import encrypt
 
 
@@ -27,8 +27,9 @@ def to_ids_uppercase(text, n_val):
 # Letter is index (i.e. a is 0, b is 1, etc)
 # 26 is start token, 27 is end token
 
+n = 5
 k = 28 # total number of symbols
-n_grams = [[[[[0] * k for _ in range(k)] for _ in range(k)] for _ in range(k)] for _ in range(k)]
+n_grams = np.zeros(shape = n * (k,), dtype=int)
 
 # Dataset has 333333 words with frequencies
 with open('data/unigram_freq.csv', newline='') as f:
@@ -40,8 +41,12 @@ for word, freq in parsed_csv:
     word_ids = to_ids(word, 5)
 
     for i in range(0, len(word) + 5 - 1):
-        this_ids = word_ids[i:i+5]
-        n_grams[this_ids[0]][this_ids[1]][this_ids[2]][this_ids[3]][this_ids[4]] += int(freq)
+        this_ids = tuple(word_ids[i:i+5])
+        n_grams[this_ids] += int(freq)
+
+
+
+print(f"Max value in ngrams: {np.amax(n_grams)}")
 
 
 # assumes it is all uppercase letters
@@ -55,30 +60,27 @@ def calculate_perplexity(text, n_val):
         #print(f"ids: {letter_ids}")
 
         for i in range(0, len(word) + n_val - 1):
-            this_ids = letter_ids[i:i+5]
-            perplexity_log += math.log(n_grams[this_ids[0]][this_ids[1]][this_ids[2]][this_ids[3]][this_ids[4]] + 1, 10)
+            this_ids = tuple(letter_ids[i:i+5])
+            perplexity_log += math.log(n_grams[this_ids] + 1, 10)
             #print(f'Checking {i} to {i+5} in {word}: {this_ids}')
 
     return perplexity_log
 
 
-
+"""
 print(calculate_perplexity("HELLO MY", 5))
 print(calculate_perplexity("JELLO", 5))
 print(calculate_perplexity("XXZXX", 5))
+"""
 
 
 best_guess = ""
 best_guess_perplex = 0
 for i in range(26):
-    test_rot = encrypt.encrypt_caesar("VH WJVN RB RWRPX VXWCXHJ", i)
+    test_rot = encrypt.encrypt_caesar("YJXY RJXXFLJ YT XJJ NK RD RJYMTI NX BTWPNSL", i)
     print(f'Test: {test_rot}, perplexity: {calculate_perplexity(test_rot, 5)}')
     if best_guess_perplex < calculate_perplexity(test_rot, 5):
         best_guess_perplex = calculate_perplexity(test_rot, 5)
         best_guess = test_rot
 
-print(f"ATTEMPTED BREAK: {best_guess}")
-
-
-
-#print(n_grams)
+print(f"BEST GUESS: {best_guess}")
