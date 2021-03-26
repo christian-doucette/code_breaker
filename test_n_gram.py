@@ -53,6 +53,54 @@ def break_caesar(cipher_text: str, n: int) -> str:
 
 
 
+# assumes text only includes uppercase letters and spaces
+def break_substitution(cipher_text: str, n: int, n_keep: int = 4) -> str:
+    # number of letters in the guesses so far
+    cardinality = 0
+
+    # lists, each entry is a tuple of (partial decipherment function, score for that function)
+    H_s = [(dict(), 0)]
+    H_t = []
+
+    # ext_order is the order in which letter substitutions will be guessed,
+    # for now just sorting by letter frequency in ciphertext
+    letter_counts = {alphabet_letter: 0 for alphabet_letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ"}
+    for letter in cipher_text:
+        if letter in letter_counts:
+            letter_counts[letter] += 1
+
+    sorted_letter_counts = sorted(letter_counts.items(), key = lambda k_v: -k_v[1])
+    ext_order = [key for key,val in letter_counts_key_val_pairs]
+
+
+
+    while cardinality < 26:
+        ciphertext_letter_to_try = ext_order[cardinality]
+        for partial_func, partial_func_score in H_s:
+
+            for plaintext_letter_to_try in "ABCDEFGHIJKLMNOPQRSTUVQXYZ":
+
+            # since I am only attempting to break 1:1 substitution ciphers, only need to check if letter not already mapped to
+                if plaintext_letter_to_try not in partial_func.values():
+                    # deep copies function then adds the test extra letter, and adds it to H_t with score
+                    partial_func_with_extra_letter = {key: val for (key, val) in partial_func.items()}
+                    partial_func_with_extra_letter[ciphertext_letter_to_try] = plaintext_letter_to_try
+
+                    # NEED TO UPDATE SCORE HERE, USING METHOD IN PAPER
+                    partial_func_with_extra_letter_score = partial_func_score
+                    H_t.append(partial_func_with_extra_letter, partial_func_with_extra_letter_score)
+
+
+        # removes all but n_keep best scoring partial decipherments
+        H_t.sort(key = lambda func_score: -func_score[1])
+        H_t = H_t[0:n_keep]
+
+        # preparing for next cycle
+        H_s = H_t
+        H_t = []
+        cardinality += 1
+
+
 
 # Loads trained n_gram model
 with open('trained_model/trained_ngram.json') as json_file:
@@ -60,6 +108,7 @@ with open('trained_model/trained_ngram.json') as json_file:
 
 
 # gets n_val for n gram - getting from model metadata
+# should raise error here if its not a tuple, although that should never happen
 n_val = len(eval(next(iter(n_grams))))
 print(f'n_val: {n_val}')
 
