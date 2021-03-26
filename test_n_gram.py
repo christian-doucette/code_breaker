@@ -15,7 +15,7 @@ def to_ids_uppercase(text: str, n: int):
 
 # calculates perplexity of a text, with laplacian smoothing
 # assumes it is all uppercase letters
-def calculate_perplexity(text: str, n: int):
+def calculate_score(text: str, n: int):
     perplexity_log = 0
 
     text_words = text.split()
@@ -41,7 +41,7 @@ def break_caesar(cipher_text: str, n: int) -> str:
     best_guess_perplex = 0
     for i in range(26):
         this_rot = encrypt.encrypt_caesar(cipher_text, i)
-        this_rot_perplexity = calculate_perplexity(this_rot, n)
+        this_rot_perplexity = calculate_score(this_rot, n)
         print(f"this: {this_rot}, with score {this_rot_perplexity}")
 
         #print(f'Test: {test_rot}, perplexity: {this_rot_perplexity}')
@@ -52,9 +52,9 @@ def break_caesar(cipher_text: str, n: int) -> str:
     return best_guess
 
 
-
+# implentation of beam search algorithm from this paper: https://www.aclweb.org/anthology/P13-1154.pdf
 # assumes text only includes uppercase letters and spaces
-def break_substitution(cipher_text: str, n: int, n_keep: int = 4) -> str:
+def break_substitution(cipher_text: str, n: int, n_keep: int = 30) -> str:
     # number of letters in the guesses so far
     cardinality = 0
 
@@ -75,7 +75,7 @@ def break_substitution(cipher_text: str, n: int, n_keep: int = 4) -> str:
 
 
     while cardinality < 26:
-        print(f'\n\nH_s at start of step {cardinality}: {H_s}')
+        #print(f'\n\nH_s at start of step {cardinality}: {H_s}')
 
         ciphertext_letter_to_try = ext_order[cardinality]
         for partial_func, partial_func_score in H_s:
@@ -88,8 +88,16 @@ def break_substitution(cipher_text: str, n: int, n_keep: int = 4) -> str:
                     partial_func_with_extra_letter = {key: val for (key, val) in partial_func.items()}
                     partial_func_with_extra_letter[ciphertext_letter_to_try] = plaintext_letter_to_try
 
+                    dict_to_pass = partial_func_with_extra_letter.copy()
+                    for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+                        if letter not in dict_to_pass:
+                            dict_to_pass[letter] = '_'
+
+
+
                     # NEED TO UPDATE SCORE HERE, USING METHOD IN PAPER
-                    partial_func_with_extra_letter_score = partial_func_score
+                    partial_func_with_extra_letter_score = calculate_score(encrypt.encrypt_substitution(cipher_text, dict_to_pass), 5)
+
                     H_t.append((partial_func_with_extra_letter, partial_func_with_extra_letter_score))
 
 
@@ -100,17 +108,16 @@ def break_substitution(cipher_text: str, n: int, n_keep: int = 4) -> str:
         # preparing for next cycle
         H_s = H_t
         H_t = []
-        print(f'H_s at end of step {cardinality}: {H_s}')
+        #print(f'H_s at end of step {cardinality}: {H_s}')
 
         cardinality += 1
 
 
-    best_substitution, best_score = H_s[0]
+    best_substitution, best_substitution_score = H_s[0]
     return encrypt.encrypt_substitution(cipher_text, best_substitution)
 
 
 
-print(break_substitution("TEST STRING TO SEE HOW THIS WORKS", 5))
 
 
 # Loads trained n_gram model
@@ -123,5 +130,7 @@ with open('trained_model/trained_ngram.json') as json_file:
 n_val = len(eval(next(iter(n_grams))))
 print(f'n_val: {n_val}')
 
+
+print(break_substitution("MQBT BT E AEPDQ ECVJNM VX YAEBN MQUM QNDABTQ GEME MV TQQ BX CR CVGQA WBAA KQ EKAQ MV EIIJPEMQAR YPQGBIM BM B DJQTT WQ WBAA TQQ WQEM QEYYQNT CR DJR CEMQQCEMBIT BT IVVA ENG BT MQQ KQTM MQBND MV JTQ BN MQBT YEPMBIJAEP TBMJEMBVN B PQEAAR ABOQG MQQ IVGQ KVVO ENG EAA MQEM BM WET EKAQ MV EGG MV CR JNGQPTMENGBND VX IPRYMVDPEYQR", 5))
 # Tests it by attempting to break a caesar cipher
-print(f'BEST GUESS: {break_caesar("QFC QYYYYYYYYYYGB", n_val)}')
+# print(f'BEST GUESS: {break_caesar("QFC QYYYYYYYYYYGB", n_val)}')
