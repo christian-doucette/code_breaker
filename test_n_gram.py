@@ -52,9 +52,24 @@ def break_caesar(cipher_text: str, n: int) -> str:
     return best_guess
 
 
+
+# helper function for break_substitution
+def get_ext_order(cipher_text: str, n: int):
+        # ext_order is the order in which letter substitutions will be guessed,
+        # for now just sorting by letter frequency in ciphertext
+        letter_counts = {alphabet_letter: 0 for alphabet_letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ"}
+        for letter in cipher_text:
+            if letter in letter_counts:
+                letter_counts[letter] += 1
+
+        sorted_letter_counts = sorted(letter_counts.items(), key = lambda k_v: -k_v[1])
+        ext_order = [key for key,val in sorted_letter_counts]
+        return ext_order
+
+
 # implentation of beam search algorithm from this paper: https://www.aclweb.org/anthology/P13-1154.pdf
 # assumes text only includes uppercase letters and spaces
-def break_substitution(cipher_text: str, n: int, n_keep: int = 30) -> str:
+def break_substitution(cipher_text: str, n: int, n_keep: int = 6) -> str:
     # number of letters in the guesses so far
     cardinality = 0
 
@@ -63,14 +78,7 @@ def break_substitution(cipher_text: str, n: int, n_keep: int = 30) -> str:
     H_t = []
 
     # ext_order is the order in which letter substitutions will be guessed,
-    # for now just sorting by letter frequency in ciphertext
-    letter_counts = {alphabet_letter: 0 for alphabet_letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ"}
-    for letter in cipher_text:
-        if letter in letter_counts:
-            letter_counts[letter] += 1
-
-    sorted_letter_counts = sorted(letter_counts.items(), key = lambda k_v: -k_v[1])
-    ext_order = [key for key,val in sorted_letter_counts]
+    ext_order = get_ext_order(cipher_text, n)
 
 
 
@@ -131,6 +139,6 @@ n_val = len(eval(next(iter(n_grams))))
 print(f'n_val: {n_val}')
 
 
-print(break_substitution("MQBT BT E AEPDQ ECVJNM VX YAEBN MQUM QNDABTQ GEME MV TQQ BX CR CVGQA WBAA KQ EKAQ MV EIIJPEMQAR YPQGBIM BM B DJQTT WQ WBAA TQQ WQEM QEYYQNT CR DJR CEMQQCEMBIT BT IVVA ENG BT MQQ KQTM MQBND MV JTQ BN MQBT YEPMBIJAEP TBMJEMBVN B PQEAAR ABOQG MQQ IVGQ KVVO ENG EAA MQEM BM WET EKAQ MV EGG MV CR JNGQPTMENGBND VX IPRYMVDPEYQR", 5))
+print(break_substitution("PA QB EMCO HAF RMLB PA RMLB M LBOH RCVR CS PA FUWBODPMUW OCNX MUW ZAOPH PRB RFZAO CD BKPOBZBYH DFQPYB MUW GCPRAFP M DAYCW VOMDI AE PRBAOBPCNMY IRHDCND ZADP AE PRB TAXBD GCYY VA ALBO M PHICNMY LCBGBOD RBMW PRBOBD MYDA OCNXD UCRCYCDPCN AFPYAAX GRCNR CD WBEPYH GALBU CUPA RCD NRMOMNPBOCDMPCAU  RCD IBODAUMY IRCYADAIRH WOMGD RBMLCYH EOAZ UMOAWUMHM LAYHM YCPBOMPFOB EAO CUDPMUNB PRB EMUD FUWBODPMUW PRCD DPFEE PRBH RMLB PRB CUPBYYBNPFMY NMIMNCPH PA POFYH MIIOBNCMPB PRB WBIPRD AE PRBDB TAXBD PA OBMYCJB PRMP PRBHOB UAP TFDP EFUUH PRBH DMH DAZBPRCUV WBBI MQAFP YCEB MD M NAUDBSFBUNB IBAIYB GRA WCDYCXB OCNX MUW ZAOPH POFYH MOB CWCAPD AE NAFODB PRBH GAFYWUP MIIOBNCMPB EAO CUDPMUNB PRB RFZAFO CU OCNXD BKCDPBUNCMY NMPNRIROMDB GFQQM YFQQM WFQ WFQ GRCNR CPDBYE CD M NOHIPCN OBEBOBUNB PA PFOVBUBLD OFDDCMU BICN EMPRBOD MUW DAUD CZ DZCOXCUV OCVRP UAG TFDP CZMVCUCUV AUB AE PRADB MWWYBIMPBW DCZIYBPAUD DNOMPNRCUV PRBCO RBMWD CU NAUEFDCAU MD WMU RMOZAUD VBUCFD FUEAYWD CPDBYE AU PRBCO PBYBLCDCAU DNOBBUD GRMP EAAYD RAG C ICPH PRBZ MUW HBD QH PRB GMH C WA RMLB M OCNX MUW ZAOPH PMPPAA MUW UA HAF NMUUAP DBB CP CPD EAO PRB YMWCBD BHBD AUYH MUW BLBU PRBH RMLB PA WBZAUDPOMPB PRMP PRBHOB GCPRCU CS IACUPD AE ZH AGU IOBEBOMQYH YAGBO QBEAOBRMUW", 5))
 # Tests it by attempting to break a caesar cipher
 # print(f'BEST GUESS: {break_caesar("QFC QYYYYYYYYYYGB", n_val)}')
