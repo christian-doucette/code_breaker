@@ -13,7 +13,7 @@ def to_ids_uppercase(text: str, n: int):
 
 
 
-# calculates perplexity of a text
+# calculates perplexity of a text, with laplacian smoothing
 # assumes it is all uppercase letters
 def calculate_perplexity(text: str, n: int):
     perplexity_log = 0
@@ -42,6 +42,7 @@ def break_caesar(cipher_text: str, n: int) -> str:
     for i in range(26):
         this_rot = encrypt.encrypt_caesar(cipher_text, i)
         this_rot_perplexity = calculate_perplexity(this_rot, n)
+        print(f"this: {this_rot}, with score {this_rot_perplexity}")
 
         #print(f'Test: {test_rot}, perplexity: {this_rot_perplexity}')
         if best_guess_perplex < this_rot_perplexity:
@@ -63,4 +64,4 @@ n_val = len(eval(next(iter(n_grams))))
 print(f'n_val: {n_val}')
 
 # Tests it by attempting to break a caesar cipher
-print(f'BEST GUESS: {break_caesar("XFKLFDJR", n_val)}')
+print(f'BEST GUESS: {break_caesar("QFC QYYYYYYYYYYGB", n_val)}')

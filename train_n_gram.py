@@ -30,11 +30,28 @@ with open('data/unigram_freq.csv', newline='') as f:
 
 
 for word, freq in parsed_csv:
-    word_ids = to_ids(word, 5)
+    word_ids = to_ids(word, n)
 
-    for i in range(0, len(word) + 5 - 1):
-        this_ids = str(tuple(word_ids[i:i+5]))
+    for i in range(0, len(word) + n - 1):
+        this_ids = str(tuple(word_ids[i:i+n]))
         n_grams[this_ids] = n_grams.get(this_ids, 0) + int(freq)
+
+
+# divides so it is probability
+for a in range(k):
+    for b in range(k):
+        for c in range(k):
+            for d in range(k):
+                total_for_prefix = 0
+                for e in range(k):
+                    this_key = str((a,b,c,d,e))
+                    total_for_prefix += n_grams.get(this_key, 0)
+
+                for e in range(k):
+                    this_key = str((a,b,c,d,e))
+                    if this_key in n_grams:
+                        n_grams[this_key] = n_grams[this_key] / total_for_prefix
+
 
 
 
