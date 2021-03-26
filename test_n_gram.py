@@ -70,15 +70,17 @@ def break_substitution(cipher_text: str, n: int, n_keep: int = 4) -> str:
             letter_counts[letter] += 1
 
     sorted_letter_counts = sorted(letter_counts.items(), key = lambda k_v: -k_v[1])
-    ext_order = [key for key,val in letter_counts_key_val_pairs]
+    ext_order = [key for key,val in sorted_letter_counts]
 
 
 
     while cardinality < 26:
+        print(f'\n\nH_s at start of step {cardinality}: {H_s}')
+
         ciphertext_letter_to_try = ext_order[cardinality]
         for partial_func, partial_func_score in H_s:
 
-            for plaintext_letter_to_try in "ABCDEFGHIJKLMNOPQRSTUVQXYZ":
+            for plaintext_letter_to_try in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
 
             # since I am only attempting to break 1:1 substitution ciphers, only need to check if letter not already mapped to
                 if plaintext_letter_to_try not in partial_func.values():
@@ -88,7 +90,7 @@ def break_substitution(cipher_text: str, n: int, n_keep: int = 4) -> str:
 
                     # NEED TO UPDATE SCORE HERE, USING METHOD IN PAPER
                     partial_func_with_extra_letter_score = partial_func_score
-                    H_t.append(partial_func_with_extra_letter, partial_func_with_extra_letter_score)
+                    H_t.append((partial_func_with_extra_letter, partial_func_with_extra_letter_score))
 
 
         # removes all but n_keep best scoring partial decipherments
@@ -98,8 +100,17 @@ def break_substitution(cipher_text: str, n: int, n_keep: int = 4) -> str:
         # preparing for next cycle
         H_s = H_t
         H_t = []
+        print(f'H_s at end of step {cardinality}: {H_s}')
+
         cardinality += 1
 
+
+    best_substitution, best_score = H_s[0]
+    return encrypt.encrypt_substitution(cipher_text, best_substitution)
+
+
+
+print(break_substitution("TEST STRING TO SEE HOW THIS WORKS", 5))
 
 
 # Loads trained n_gram model
