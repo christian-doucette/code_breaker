@@ -121,18 +121,13 @@ def break_substitution(cipher_text: str, n: int, n_keep: int = 50) -> str:
             # since I am only attempting to break 1:1 substitution ciphers, only need to check if letter not already mapped to
                 if plaintext_letter_to_try not in partial_func.values():
                     # deep copies function then adds the test extra letter, and adds it to H_t with score
-                    partial_func_with_extra_letter = {key: val for (key, val) in partial_func.items()}
+                    partial_func_with_extra_letter = partial_func.copy()
                     partial_func_with_extra_letter[ciphertext_letter_to_try] = plaintext_letter_to_try
 
-                    dict_to_pass = partial_func_with_extra_letter.copy()
-                    for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
-                        if letter not in dict_to_pass:
-                            dict_to_pass[letter] = '_'
 
 
-
-                    # NEED TO UPDATE SCORE HERE, USING METHOD IN PAPER
-                    partial_func_with_extra_letter_score = calculate_score(encrypt.encrypt_substitution(cipher_text, dict_to_pass), 5)
+                    # currently recalculating score, but would be easier to only add the new ones
+                    partial_func_with_extra_letter_score = calculate_score(encrypt.encrypt_substitution_partial(cipher_text, partial_func_with_extra_letter), 5)
 
                     H_t.append((partial_func_with_extra_letter, partial_func_with_extra_letter_score))
 

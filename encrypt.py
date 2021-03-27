@@ -73,6 +73,22 @@ def encrypt_substitution(plain_text: str, substitutions) -> str:
     cipher_text = ''.join([substitutions.get(letter, letter) for letter in cleaned_plain_text])
     return cipher_text
 
+# encrypts text using Substitution Cipher, where the substitutions dictionary can be partial
+def encrypt_substitution_partial(plain_text: str, substitutions) -> str:
+    def map_character(character: str, partial_dict) -> str:
+        if character not in "ABCDEFGHIJKLMNOPQRSTUVWXYZ_ ":
+            raise Exception(f"Character {character} is not valid")
+        elif character == ' ':
+            return ' '
+        elif character in partial_dict:
+            return partial_dict[character]
+        else:
+            return '_'
+
+    cleaned_plain_text = clean_text(plain_text)
+    cipher_text = ''.join([map_character(letter, substitutions) for letter in cleaned_plain_text])
+    return cipher_text
+
 
 
 
