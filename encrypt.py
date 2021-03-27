@@ -61,7 +61,7 @@ def encrypt_caesar(plain_text: str, rot: int) -> str:
 
 # gets a random substitution of uppercase letters
 def get_random_substitution():
-    letters = [letter for letter in "ABCDEFGHIJKLMNOPQRSTUVQXYZ"]
+    letters = [letter for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ"]
     random_letters_permutation = random.sample(letters, k=26)
     random_substitution = {letters[i]: random_letters_permutation[i] for i in range(0, 26)}
     return random_substitution

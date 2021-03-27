@@ -13,6 +13,7 @@ def to_ids_uppercase(text: str, n: int):
 
 
 
+
 # calculates perplexity of a text, with laplacian smoothing
 # assumes it is all uppercase letters
 def calculate_score(text: str, n: int):
@@ -57,19 +58,46 @@ def break_caesar(cipher_text: str, n: int) -> str:
 def get_ext_order(cipher_text: str, n: int):
         # ext_order is the order in which letter substitutions will be guessed,
         # for now just sorting by letter frequency in ciphertext
-        letter_counts = {alphabet_letter: 0 for alphabet_letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ"}
-        for letter in cipher_text:
-            if letter in letter_counts:
-                letter_counts[letter] += 1
 
-        sorted_letter_counts = sorted(letter_counts.items(), key = lambda k_v: -k_v[1])
-        ext_order = [key for key,val in sorted_letter_counts]
+        ext_order = []
+        while len(ext_order) < 26:
+            # greedily chooses letter in most valid n-grams at each step
+            max_letter = ""
+            max_letter_num_grams = -1
+
+            for alphabet_letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+                if alphabet_letter not in ext_order:
+                    num_grams_for_this_letter = 0
+
+                    text_words = cipher_text.split()
+                    for word in text_words:
+                        letter_ids = to_ids_uppercase(word, n)
+                        for i in range(0, len(word) + n - 1):
+                            this_ids = tuple(letter_ids[i:i+5])
+                            is_valid_gram = True
+                            for id in this_ids:
+                                if id not in [ord(ext_letter) - 65 for ext_letter in ext_order] and id != 26 and id != 27 and id != ord(alphabet_letter) - 65:
+                                     is_valid_gram = False
+
+                            if is_valid_gram:
+                                num_grams_for_this_letter += 1
+
+
+
+
+                    if max_letter_num_grams < num_grams_for_this_letter:
+                        max_letter_num_grams = num_grams_for_this_letter
+                        max_letter           = alphabet_letter
+
+
+            ext_order.append(max_letter)
+
         return ext_order
 
 
 # implentation of beam search algorithm from this paper: https://www.aclweb.org/anthology/P13-1154.pdf
 # assumes text only includes uppercase letters and spaces
-def break_substitution(cipher_text: str, n: int, n_keep: int = 6) -> str:
+def break_substitution(cipher_text: str, n: int, n_keep: int = 4) -> str:
     # number of letters in the guesses so far
     cardinality = 0
 
@@ -139,6 +167,8 @@ n_val = len(eval(next(iter(n_grams))))
 print(f'n_val: {n_val}')
 
 
-print(break_substitution("PA QB EMCO HAF RMLB PA RMLB M LBOH RCVR CS PA FUWBODPMUW OCNX MUW ZAOPH PRB RFZAO CD BKPOBZBYH DFQPYB MUW GCPRAFP M DAYCW VOMDI AE PRBAOBPCNMY IRHDCND ZADP AE PRB TAXBD GCYY VA ALBO M PHICNMY LCBGBOD RBMW PRBOBD MYDA OCNXD UCRCYCDPCN AFPYAAX GRCNR CD WBEPYH GALBU CUPA RCD NRMOMNPBOCDMPCAU  RCD IBODAUMY IRCYADAIRH WOMGD RBMLCYH EOAZ UMOAWUMHM LAYHM YCPBOMPFOB EAO CUDPMUNB PRB EMUD FUWBODPMUW PRCD DPFEE PRBH RMLB PRB CUPBYYBNPFMY NMIMNCPH PA POFYH MIIOBNCMPB PRB WBIPRD AE PRBDB TAXBD PA OBMYCJB PRMP PRBHOB UAP TFDP EFUUH PRBH DMH DAZBPRCUV WBBI MQAFP YCEB MD M NAUDBSFBUNB IBAIYB GRA WCDYCXB OCNX MUW ZAOPH POFYH MOB CWCAPD AE NAFODB PRBH GAFYWUP MIIOBNCMPB EAO CUDPMUNB PRB RFZAFO CU OCNXD BKCDPBUNCMY NMPNRIROMDB GFQQM YFQQM WFQ WFQ GRCNR CPDBYE CD M NOHIPCN OBEBOBUNB PA PFOVBUBLD OFDDCMU BICN EMPRBOD MUW DAUD CZ DZCOXCUV OCVRP UAG TFDP CZMVCUCUV AUB AE PRADB MWWYBIMPBW DCZIYBPAUD DNOMPNRCUV PRBCO RBMWD CU NAUEFDCAU MD WMU RMOZAUD VBUCFD FUEAYWD CPDBYE AU PRBCO PBYBLCDCAU DNOBBUD GRMP EAAYD RAG C ICPH PRBZ MUW HBD QH PRB GMH C WA RMLB M OCNX MUW ZAOPH PMPPAA MUW UA HAF NMUUAP DBB CP CPD EAO PRB YMWCBD BHBD AUYH MUW BLBU PRBH RMLB PA WBZAUDPOMPB PRMP PRBHOB GCPRCU CS IACUPD AE ZH AGU IOBEBOMQYH YAGBO QBEAOBRMUW", 5))
+my_cipher_text = encrypt.encrypt_substitution("PA QB EMCO HAF RMLB PA RMLB M LBOH RCVR CS PA FUWBODPMUW OCNX MUW ZAOPH PRB RFZAO CD BKPOBZBYH DFQPYB MUW GCPRAFP M DAYCW VOMDI AE PRBAOBPCNMY IRHDCND ZADP AE PRB TAXBD GCYY VA ALBO M PHICNMY LCBGBOD RBMW PRBOBD MYDA OCNXD UCRCYCDPCN AFPYAAX GRCNR CD WBEPYH GALBU CUPA RCD NRMOMNPBOCDMPCAU  RCD IBODAUMY IRCYADAIRH WOMGD RBMLCYH EOAZ UMOAWUMHM LAYHM YCPBOMPFOB EAO CUDPMUNB PRB EMUD FUWBODPMUW PRCD DPFEE PRBH RMLB PRB CUPBYYBNPFMY NMIMNCPH PA POFYH MIIOBNCMPB PRB WBIPRD AE PRBDB TAXBD PA OBMYCJB PRMP PRBHOB UAP TFDP EFUUH PRBH DMH DAZBPRCUV WBBI MQAFP YCEB MD M NAUDBSFBUNB IBAIYB GRA WCDYCXB OCNX MUW ZAOPH POFYH MOB CWCAPD AE NAFODB PRBH GAFYWUP MIIOBNCMPB EAO CUDPMUNB PRB RFZAFO CU OCNXD BKCDPBUNCMY NMPNRIROMDB GFQQM YFQQM WFQ WFQ GRCNR CPDBYE CD M NOHIPCN OBEBOBUNB PA PFOVBUBLD OFDDCMU BICN EMPRBOD MUW DAUD CZ DZCOXCUV OCVRP UAG TFDP CZMVCUCUV AUB AE PRADB MWWYBIMPBW DCZIYBPAUD DNOMPNRCUV PRBCO RBMWD CU NAUEFDCAU MD WMU RMOZAUD VBUCFD FUEAYWD CPDBYE AU PRBCO PBYBLCDCAU DNOBBUD GRMP EAAYD RAG C ICPH PRBZ MUW HBD QH PRB GMH C WA RMLB M OCNX MUW ZAOPH PMPPAA MUW UA HAF NMUUAP DBB CP CPD EAO PRB YMWCBD BHBD AUYH MUW BLBU PRBH RMLB PA WBZAUDPOMPB PRMP PRBHOB GCPRCU CS IACUPD AE ZH AGU IOBEBOMQYH YAGBO QBEAOBRMUW", encrypt.get_random_substitution())
+#print(my_cipher_text)
+print(break_substitution(my_cipher_text, 5))
 # Tests it by attempting to break a caesar cipher
 # print(f'BEST GUESS: {break_caesar("QFC QYYYYYYYYYYGB", n_val)}')
