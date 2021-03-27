@@ -97,7 +97,7 @@ def get_ext_order(cipher_text: str, n: int):
 
 # implentation of beam search algorithm from this paper: https://www.aclweb.org/anthology/P13-1154.pdf
 # assumes text only includes uppercase letters and spaces
-def break_substitution(cipher_text: str, n: int, n_keep: int = 50) -> str:
+def break_substitution(cipher_text: str, n: int, n_keep: int = 100) -> str:
     # number of letters in the guesses so far
     cardinality = 0
 
@@ -162,7 +162,7 @@ n_val = len(eval(next(iter(n_grams))))
 print(f'n_val: {n_val}')
 
 
-my_cipher_text = encrypt.encrypt_substitution("THE MOST FUN I COULD HAVE WOULD BE TO JUST ENJOY MYSELF IN THE SUMMER SUN WITH A COOL GLASS OF WATER IN MY HAND", encrypt.get_random_substitution())
+my_cipher_text = encrypt.encrypt_substitution("I GOT A LETTER THIS MORNING WHAT DO YOU RECKON IT READ I READ IT AND IT SAID THE GIRL YOU LOVE IS DEAD WHEN I HEAR MY NAME I WANT TO DISAPPEAR YES IM BUSTED BUT MY HEART WONT LET ME DIE WHEN I FEEL ALRIGHT DARLING WONT YOU COME AROUND", encrypt.get_random_substitution())
 print(my_cipher_text)
 #print(break_substitution("AIQ UZT EIV YVQM TVA XQZY KVVDM IZM TV ZYOZTAZNQ VOQX AIQ UZT AIZA LZT TVA XQZY AIQU", 5))
 print(break_substitution(my_cipher_text, 5))
