@@ -4,7 +4,19 @@
 {% block title  %}Caesar{% endblock %}
 
 {% block content %}
-<h1 style="text-align:center"> Caesar Cipher Encryption</h1>
+
+<h1 style="text-align:center"> Caesar Cipher</h1>
+<p>The Caesar cipher is a simple cipher that just involves rotating all the letters of the alphabet by some fixed number, called the <i>rotation</i>.
+   In order for decryption to work, the input text must:
+   <ol>
+    <li>Be standard English text (but proper nouns are okay)</li>
+    <li>Use just letters and spaces. If you input anything else (numbers, special characters, etc.), it will be ignored</li>
+  </ol>
+</p>
+
+
+
+<h2 style="text-align:center">Caesar Cipher Encryption</h2>
 <!--
 <form >
     <input autocomplete="off" type="text" name="input_text"  required>
@@ -16,7 +28,7 @@
 <form action="/caesar/encrypt" method="post">
   <div class="form-group">
     <label for="input_text">Plaintext</label>
-    <input type="text" class="form-control" id="input_text" name="input_text" placeholder="Enter text to encrypt">
+    <input type="text" class="form-control" id="input_text" name="input_text" placeholder="Enter text to encrypt" autocomplete="off">
   </div>
   <div class="form-group">
     <label for="input_rot">Rotation</label>
@@ -29,13 +41,13 @@
   <p> Encrypted Text: </p> <p> {{ encrypted_text }} </p>
 {% endif %}
 
-<h1 style="text-align:center"> Caesar Cipher Decryption</h1>
+<h2 style="text-align:center">Caesar Cipher Decryption</h2>
 
 
 <form action="/caesar/decrypt" method="post">
   <div class="form-group">
     <label for="input_text">Ciphertext</label>
-    <input type="text" class="form-control" id="input_text" name="input_text" placeholder="Enter text to decrypt">
+    <input type="text" class="form-control" id="input_text" name="input_text" placeholder="Enter text to decrypt" autocomplete="off">
   </div>
   <button type="submit" class="btn btn-primary mb-3">Decrypt Text</button>
 </form>
@@ -46,5 +58,9 @@
   <p> Decrypted Text: </p> <p> {{ decrypted_text }} </p>
 {% endif %}
 
-
+<p>Since a Caesar cipher encryption is just some rotation of the alphabet, there are only 26 possibilities, so my decryption method can just check them all by brute force.
+  The only tricky part here is that it must decide which of the possible decriptions looks the most correct. A human could do this just by looking at them, but its a little tricker for a computer.
+  To accomplish this, I use a tool from NLP: a simple language model called n-gram.
+  It is trained on common English words, and can calculate a score for any sequence of letters, which tells how similar that sequence is to regular English.
+</p>
 {% endblock %}
