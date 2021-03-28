@@ -1,5 +1,6 @@
 import random
 import re
+import unicodedata
 
 
 #======================#
@@ -15,7 +16,11 @@ def is_uppercase_letter(c: str) -> bool:
 # the function for cleaning input text
 # for now just maps letters to uppercase
 def clean_text(input_text: str) -> str:
-    cleaned_text = input_text.upper()  # maps to uppercase
+    cleaned_text = input_text.upper()                           # maps to uppercase
+    cleaned_text = unicodedata.normalize("NFKD", cleaned_text)  # normalizes with unicode
+    cleaned_text = re.sub("[^A-Z\s]", " ", cleaned_text)        # maps all non-letter, non-space characters to spaces
+    cleaned_text = ' '.join(cleaned_text.split())               # puts exactly one space between words
+
     return cleaned_text
 
 

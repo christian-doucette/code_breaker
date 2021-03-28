@@ -4,5 +4,63 @@
 {% block title  %}Substitution{% endblock %}
 
 {% block content %}
-<h1> Substitution page title!
+
+<h1 style="text-align:center">Substitution Cipher</h1>
+<p>The Substitution cipher is another cipher, will put description here.
+   In order for decryption to work, the input text must:
+   <ol>
+    <li>Be standard English text (but proper nouns are okay)</li>
+    <li>Be relatively long (~300 characters)</li>
+    <li>Use just letters and spaces. If you input anything else (numbers, special characters, etc.), it will be ignored</li>
+  </ol>
+</p>
+
+
+
+<h2 style="text-align:center">Substitution Cipher Encryption</h2>
+<!--
+<form >
+    <input autocomplete="off" type="text" name="input_text"  required>
+    <input type="number" name="input_rot" min=-1000 max=1000 required>
+    <button type="submit">Encrypt my text!</button>
+</form>
+-->
+
+<form action="/substitution/encrypt" method="post">
+  <div class="form-group">
+    <label for="input_text">Plaintext</label>
+    <input type="textarea" class="form-control" id="input_text" name="input_text" placeholder="Enter text to encrypt" pattern="^[a-zA-Z\s]*$" title="Only letters and spaces" autocomplete="off">
+  </div>
+
+  <div class="form-group">
+    <label for="input_text">Substitution (enter as a permutation of the alphabet)</label>
+    <input type="text" class="form-control" id="substitution" name="substitution" placeholder="For example, MNBVCXZASDFGHJKLTREWQYUIOP" autocomplete="off">
+  </div>
+
+  <button type="submit" class="btn btn-primary mb-3">Encrypt Text</button>
+</form>
+
+{% if encrypted_text %}
+  <p> Encrypted Text: </p> <p> {{ encrypted_text }} </p>
+{% endif %}
+
+<h2 style="text-align:center">Substitution Cipher Decryption</h2>
+
+
+<form action="/substitution/decrypt" method="post">
+  <div class="form-group">
+    <label for="input_text">Ciphertext</label>
+    <textarea class="form-control" rows="3" id="input_text" name="input_text" placeholder="Enter text to decrypt" pattern="^[a-zA-Z\s]*$" title="Only letters and spaces" autocomplete="off"></textarea>
+  </div>
+  <button type="submit" class="btn btn-primary mb-3">Decrypt Text</button>
+</form>
+
+
+
+{% if decrypted_text %}
+  <p> Decrypted Text: </p> <p> {{ decrypted_text }} </p>
+{% endif %}
+
+<p>Since a Substitution cipher...
+</p>
 {% endblock %}

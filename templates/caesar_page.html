@@ -5,7 +5,7 @@
 
 {% block content %}
 
-<h1 style="text-align:center"> Caesar Cipher</h1>
+<h1 style="text-align:center">Caesar Cipher</h1>
 <p>The Caesar cipher is a simple cipher that just involves rotating all the letters of the alphabet by some fixed number, called the <i>rotation</i>.
    In order for decryption to work, the input text must:
    <ol>
@@ -17,18 +17,11 @@
 
 
 <h2 style="text-align:center">Caesar Cipher Encryption</h2>
-<!--
-<form >
-    <input autocomplete="off" type="text" name="input_text"  required>
-    <input type="number" name="input_rot" min=-1000 max=1000 required>
-    <button type="submit">Encrypt my text!</button>
-</form>
--->
 
 <form action="/caesar/encrypt" method="post">
   <div class="form-group">
     <label for="input_text">Plaintext</label>
-    <input type="text" class="form-control" id="input_text" name="input_text" placeholder="Enter text to encrypt" autocomplete="off">
+    <input type="textarea" class="form-control" id="input_text" name="input_text" placeholder="Enter text to encrypt" pattern="^[a-zA-Z\s]*$" title="Only letters and spaces" autocomplete="off">
   </div>
   <div class="form-group">
     <label for="input_rot">Rotation</label>
@@ -47,7 +40,7 @@
 <form action="/caesar/decrypt" method="post">
   <div class="form-group">
     <label for="input_text">Ciphertext</label>
-    <input type="text" class="form-control" id="input_text" name="input_text" placeholder="Enter text to decrypt" autocomplete="off">
+    <input type="textarea" class="form-control" id="input_text" name="input_text" placeholder="Enter text to decrypt" pattern="^[a-zA-Z\s]*$" title="Only letters and spaces" autocomplete="off">
   </div>
   <button type="submit" class="btn btn-primary mb-3">Decrypt Text</button>
 </form>

@@ -58,10 +58,39 @@ def caesar_decrypt_input():
 
 
 
-
+# Loads the Substitution Cipher Page
 @app.route('/substitution')
 def substitution_page():
-    return render_template('substitution_page.html')
+    return render_template('substitution_page.html', encrypted_text = None, decrypted_text = None)
+
+
+
+
+# Loads the Substitution Cipher Page, when the user has entered text to be encrypted
+@app.route('/substitution/encrypt/', methods=['GET', 'POST'])
+def substitution_encrypt_input():
+    # Gets data from form
+    input_text    = request.form['input_text']
+    substitution  = request.form['substitution']
+    substitution_func = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ"[i]: substitution[i] for i in range(26)}
+
+    encrypted_text = encrypt.encrypt_substitution(input_text, substitution_func)
+    return render_template('substitution_page.html', encrypted_text = encrypted_text, decrypted_text = None)
+
+
+
+
+# Loads the Substitution Cipher Page, when the user has entered text to be encrypted
+@app.route('/substitution/decrypt/', methods=['GET', 'POST'])
+def substitution_decrypt_input():
+    # Gets data from form
+    input_text    = request.form['input_text']
+
+    # runs decryption function
+    decrypted_text = test_n_gram.break_substitution(input_text, 5)
+    return render_template('substitution_page.html', encrypted_text = None, decrypted_text = decrypted_text)
+
+
 
 
 @app.route('/vignere')
