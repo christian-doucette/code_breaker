@@ -4,5 +4,41 @@
 {% block title  %}Vignere{% endblock %}
 
 {% block content %}
-<h1> Vignere page title!
+
+<h1 style="text-align:center">Vignere Cipher</h1>
+<p>The Vignere cipher is another cipher, will put description here.
+   In order for decryption to work, the input text must:
+   <ol>
+    <li>Be standard English text (but proper nouns are okay)</li>
+    <li>Be relatively long (~300 characters)</li>
+    <li>Use just letters and spaces. If you input anything else (numbers, special characters, etc.), it will be ignored</li>
+  </ol>
+</p>
+
+
+
+<h2 style="text-align:center">Vignere Cipher Encryption</h2>
+
+<form action="/vignere/encrypt" method="post">
+  <div class="form-group">
+    <label for="input_text">Plaintext</label>
+    <textarea class="form-control" rows="3" id="input_text" name="input_text" placeholder="Enter text to encrypt" autocomplete="off"></textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="input_keyword">Keyword (must only include letters)</label>
+    <input type="text" class="form-control" id="input_keyword" name="input_keyword" placeholder="Enter keyword" pattern="^[a-zA-Z]*$" title="Only letters" autocomplete="off">
+  </div>
+
+  <button type="submit" class="btn btn-primary mb-3">Encrypt Text</button>
+</form>
+
+{% if encrypted_text %}
+  <p> Encrypted Text: </p> <p> {{ encrypted_text }} </p>
+{% endif %}
+
+
+
+<p>Since a Vignere cipher...
+</p>
 {% endblock %}

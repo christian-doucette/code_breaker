@@ -17,6 +17,7 @@ def is_uppercase_letter(c: str) -> bool:
 # for now just maps letters to uppercase
 def clean_text(input_text: str) -> str:
     cleaned_text = input_text.upper()                           # maps to uppercase
+    cleaned_text = re.sub("[\']", "", cleaned_text)             # removes ', so contractions will still be one word
     cleaned_text = unicodedata.normalize("NFKD", cleaned_text)  # normalizes with unicode
     cleaned_text = re.sub("[^A-Z\s]", " ", cleaned_text)        # maps all non-letter, non-space characters to spaces
     cleaned_text = ' '.join(cleaned_text.split())               # puts exactly one space between words

@@ -18,13 +18,6 @@
 
 
 <h2 style="text-align:center">Substitution Cipher Encryption</h2>
-<!--
-<form >
-    <input autocomplete="off" type="text" name="input_text"  required>
-    <input type="number" name="input_rot" min=-1000 max=1000 required>
-    <button type="submit">Encrypt my text!</button>
-</form>
--->
 
 <form action="/substitution/encrypt" method="post">
   <div class="form-group">
@@ -33,8 +26,8 @@
   </div>
 
   <div class="form-group">
-    <label for="input_text">Substitution (enter as a permutation of the alphabet)</label>
-    <input type="text" class="form-control" id="substitution" name="substitution" placeholder="For example, MNBVCXZASDFGHJKLTREWQYUIOP" autocomplete="off">
+    <label for="input_substitution">Substitution (enter as a permutation of the alphabet)</label>
+    <input type="text" class="form-control" id="input_substitution" name="input_substitution" placeholder="For example, MNBVCXZASDFGHJKLTREWQYUIOP" autocomplete="off">
   </div>
 
   <button type="submit" class="btn btn-primary mb-3">Encrypt Text</button>

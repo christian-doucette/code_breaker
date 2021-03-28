@@ -26,11 +26,14 @@ def home_page():
 
 
 
+
+
+#======== Caesar Cipher Routes =========#
+
 # Loads the Caesar Cipher Page
 @app.route('/caesar')
 def caesar_page():
     return render_template('caesar_page.html', encrypted_text = None, decrypted_text = None)
-
 
 
 
@@ -41,9 +44,9 @@ def caesar_encrypt_input():
     input_text = request.form['input_text']
     input_rot  = int(request.form['input_rot'])
 
+    # runs encryption function
     encrypted_text = encrypt.encrypt_caesar(input_text, input_rot)
     return render_template('caesar_page.html', encrypted_text = encrypted_text, decrypted_text = None)
-
 
 
 
@@ -53,10 +56,15 @@ def caesar_decrypt_input():
     # Gets data from form
     input_text = request.form['input_text']
 
+    # runs decryption function
     decrypted_text = test_n_gram.break_caesar(input_text, 5)
     return render_template('caesar_page.html', encrypted_text = None, decrypted_text = decrypted_text)
 
 
+
+
+
+#======== Substitution Cipher Routes =========#
 
 # Loads the Substitution Cipher Page
 @app.route('/substitution')
@@ -65,18 +73,17 @@ def substitution_page():
 
 
 
-
 # Loads the Substitution Cipher Page, when the user has entered text to be encrypted
 @app.route('/substitution/encrypt/', methods=['GET', 'POST'])
 def substitution_encrypt_input():
     # Gets data from form
-    input_text    = request.form['input_text']
-    substitution  = request.form['substitution']
-    substitution_func = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ"[i]: substitution[i] for i in range(26)}
+    input_text          = request.form['input_text']
+    input_substitution  = request.form['input_substitution']
+    substitution_func = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ"[i]: input_substitution[i] for i in range(26)}
 
+    # runs encryption function
     encrypted_text = encrypt.encrypt_substitution(input_text, substitution_func)
     return render_template('substitution_page.html', encrypted_text = encrypted_text, decrypted_text = None)
-
 
 
 
@@ -93,6 +100,24 @@ def substitution_decrypt_input():
 
 
 
+
+
+#======== Vignere Cipher Routes =========#
+
+# Loads the Vignere Cipher Page
 @app.route('/vignere')
 def vignere_page():
-    return render_template('vignere_page.html')
+    return render_template('vignere_page.html', encrypted_text = None)
+
+
+
+# Loads the Vignere Cipher Page, when the user has entered text to be encrypted
+@app.route('/substitution/encrypt/', methods=['GET', 'POST'])
+def vignere_encrypt_input():
+    # Gets data from form
+    input_text     = request.form['input_text']
+    input_keyword  = request.form['input_keyword']
+
+    # runs encryption function
+    encrypted_text = encrypt.encrypt_substitution(input_text, substitution_func)
+    return render_template('substitution_page.html', encrypted_text = encrypted_text)
