@@ -6,8 +6,9 @@ import sqlite3
 
 
 # My code files
-import encrypt
-import test_n_gram
+import encrypt      # encryption functions for caesar, substitution and vignere
+import test_n_gram  # decryption functions for caesar and substitution
+import db           # database functions
 
 
 

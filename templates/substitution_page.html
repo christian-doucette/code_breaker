@@ -5,7 +5,7 @@
 
 {% block content %}
 
-<h1 style="text-align:center">Substitution Cipher</h1>
+<h1 class="mb-5" style="text-align:center">Substitution Cipher</h1>
 <p>The Substitution cipher is another cipher, will put description here.
    In order for decryption to work, the input text must:
    <ol>
@@ -78,7 +78,7 @@ function get_random_alphabet_permutation () {
 }
 
 
-
+// Sets the substitution input box to a random alphabet permutation from get_random_alphabet_permutation()
 function fill_in_form_with_alphabet_permutation() {
   alphabet_permutation_textbox = document.getElementById('input_substitution');
   alphabet_permutation_textbox.value = get_random_alphabet_permutation();
