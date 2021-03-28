@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+<title>{% block title %}{% endblock %}</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* makes smaller if not on mobile */
+@media (min-width:800px){
+  .container {
+    width: 40%;
+  }
+}
+</style>
+</head>
+
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
+      <a class="navbar-brand" href="/">Code Breaker</a>
+      <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link" href="/caesar">Caesar</a></li>
+        <li class="nav-item"><a class="nav-link" href="/substitution">Subsitution</a></li>
+        <li class="nav-item"><a class="nav-link" href="/vignere">Vignere</a></li>
+      </ul>
+    </nav>
+    <!-- Navbar end -->
+
+
+  <!-- The content for the specific page -->
+  <div class="container">
+    {% block content %}{% endblock %}
+  </div>
+  <!-- End of the content for the specific page -->
+
+
+
+</body>
+</html>
