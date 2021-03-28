@@ -112,12 +112,12 @@ def vignere_page():
 
 
 # Loads the Vignere Cipher Page, when the user has entered text to be encrypted
-@app.route('/substitution/encrypt/', methods=['GET', 'POST'])
+@app.route('/vignere/encrypt/', methods=['GET', 'POST'])
 def vignere_encrypt_input():
     # Gets data from form
     input_text     = request.form['input_text']
     input_keyword  = request.form['input_keyword']
 
     # runs encryption function
-    encrypted_text = encrypt.encrypt_substitution(input_text, substitution_func)
-    return render_template('substitution_page.html', encrypted_text = encrypted_text)
+    encrypted_text = encrypt.encrypt_vignere(input_text, input_keyword)
+    return render_template('vignere_page.html', encrypted_text = encrypted_text)
