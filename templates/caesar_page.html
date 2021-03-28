@@ -1,9 +1,20 @@
 {% extends 'base.html' %}
 
-{% block header %}
-  <h1>{% block title %}Caesar{% endblock %}</h1>
-{% endblock %}
+{% block header %}Caesar{% endblock %}
+{% block title  %}Caesar{% endblock %}
 
 {% block content %}
-<h1> Caesar page title!
+<h1 style="text-align:center"> Caesar Cipher Encryption</h1>
+
+<form action="/caesar/encrypt" method="post">
+    <input autocomplete="off" type="text" name="input_text" placeholder="Enter text to encrypt" required>
+    <input type="number" name="input_rot" min="0" max="25" required>
+    <button type="submit">Encrypt my text</button>
+</form>
+
+{% if encrypted_text %}
+  <p> Encrypted Text: {{ encrypted_text }} </p>
+{% endif %}
+
+<h1 style="text-align:center"> Caesar Cipher Decryption</h1>
 {% endblock %}

@@ -120,19 +120,3 @@ def encrypt_vignere(plain_text: str, keyword: str) -> str:
             cipher_text += character
 
     return cipher_text
-
-
-
-
-
-#======================#
-#   Tests for funcs    #
-#======================#
-
-substitutions_dict = get_random_substitution()
-print(substitutions_dict)
-
-
-print(encrypt_caesar("Hello there", 25))
-print(encrypt_substitution("Test message", substitutions_dict))
-print(encrypt_vignere("the sun and the man in the moon", "king"))
