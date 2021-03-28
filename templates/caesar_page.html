@@ -5,25 +5,45 @@
 
 {% block content %}
 <h1 style="text-align:center"> Caesar Cipher Encryption</h1>
-
-<form action="/caesar/encrypt" method="post">
-    <input autocomplete="off" type="text" name="input_text" placeholder="Enter text to encrypt" required>
+<!--
+<form >
+    <input autocomplete="off" type="text" name="input_text"  required>
     <input type="number" name="input_rot" min=-1000 max=1000 required>
     <button type="submit">Encrypt my text!</button>
 </form>
+-->
+
+<form action="/caesar/encrypt" method="post">
+  <div class="form-group">
+    <label for="input_text">Plaintext</label>
+    <input type="text" class="form-control" id="input_text" name="input_text" placeholder="Enter text to encrypt">
+  </div>
+  <div class="form-group">
+    <label for="input_rot">Rotation</label>
+    <input type="number" class="form-control" id="input_rot" name="input_rot" min=-1000 max=1000 required>
+  </div>
+  <button type="submit" class="btn btn-primary mb-3">Encrypt Text</button>
+</form>
 
 {% if encrypted_text %}
-  <p> Encrypted Text: {{ encrypted_text }} </p>
+  <p> Encrypted Text: </p> <p> {{ encrypted_text }} </p>
 {% endif %}
 
 <h1 style="text-align:center"> Caesar Cipher Decryption</h1>
+
+
 <form action="/caesar/decrypt" method="post">
-    <input autocomplete="off" type="text" name="input_text" placeholder="Enter text to encrypt" required>
-    <button type="submit">Decrypt my text!</button>
+  <div class="form-group">
+    <label for="input_text">Ciphertext</label>
+    <input type="text" class="form-control" id="input_text" name="input_text" placeholder="Enter text to decrypt">
+  </div>
+  <button type="submit" class="btn btn-primary mb-3">Decrypt Text</button>
 </form>
 
+
+
 {% if decrypted_text %}
-  <p> Decrypted Text: {{ decrypted_text }} </p>
+  <p> Decrypted Text: </p> <p> {{ decrypted_text }} </p>
 {% endif %}
 
 
