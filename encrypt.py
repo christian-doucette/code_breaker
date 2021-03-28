@@ -47,6 +47,7 @@ def get_random_rot():
 
 # encrypts text using Caesar Cipher
 def encrypt_caesar(plain_text: str, rot: int) -> str:
+    rot = rot % 26
     cleaned_plain_text = clean_text(plain_text)
     cipher_text = ''.join([rotate_letter(letter, rot) for letter in cleaned_plain_text])
     return cipher_text

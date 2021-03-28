@@ -38,16 +38,17 @@ def calculate_score(text: str, n: int):
 # finds and returns rotation of cipher text with best perplexity value
 # assumes text only includes uppercase letters and spaces
 def break_caesar(cipher_text: str, n: int) -> str:
-    best_guess = ""
-    best_guess_perplex = 0
-    for i in range(26):
+    best_guess = cipher_text
+    best_guess_score = calculate_score(cipher_text, n)
+
+    for i in range(1, 26):
         this_rot = encrypt.encrypt_caesar(cipher_text, i)
-        this_rot_perplexity = calculate_score(this_rot, n)
-        print(f"this: {this_rot}, with score {this_rot_perplexity}")
+        this_rot_score = calculate_score(this_rot, n)
+        print(f"this: {this_rot}, with score {this_rot_score}")
 
         #print(f'Test: {test_rot}, perplexity: {this_rot_perplexity}')
-        if best_guess_perplex < this_rot_perplexity:
-            best_guess_perplex = this_rot_perplexity
+        if best_guess_score < this_rot_score:
+            best_guess_score = this_rot_score
             best_guess = this_rot
 
     return best_guess
@@ -162,10 +163,10 @@ n_val = len(eval(next(iter(n_grams))))
 print(f'n_val: {n_val}')
 
 
-my_cipher_text = encrypt.encrypt_substitution("I GOT A LETTER THIS MORNING WHAT DO YOU RECKON IT READ I READ IT AND IT SAID THE GIRL YOU LOVE IS DEAD WHEN I HEAR MY NAME I WANT TO DISAPPEAR YES IM BUSTED BUT MY HEART WONT LET ME DIE WHEN I FEEL ALRIGHT DARLING WONT YOU COME AROUND", encrypt.get_random_substitution())
-print(my_cipher_text)
+#my_cipher_text = encrypt.encrypt_substitution("I GOT A LETTER THIS MORNING WHAT DO YOU RECKON IT READ I READ IT AND IT SAID THE GIRL YOU LOVE IS DEAD WHEN I HEAR MY NAME I WANT TO DISAPPEAR YES IM BUSTED BUT MY HEART WONT LET ME DIE WHEN I FEEL ALRIGHT DARLING WONT YOU COME AROUND", encrypt.get_random_substitution())
+#print(my_cipher_text)
 #print(break_substitution("AIQ UZT EIV YVQM TVA XQZY KVVDM IZM TV ZYOZTAZNQ VOQX AIQ UZT AIZA LZT TVA XQZY AIQU", 5))
-print(break_substitution(my_cipher_text, 5))
+#print(break_substitution(my_cipher_text, 5))
 
 # Tests it by attempting to break a caesar cipher
 # print(f'BEST GUESS: {break_caesar("QFC QYYYYYYYYYYGB", n_val)}')

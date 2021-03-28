@@ -8,8 +8,8 @@
 
 <form action="/caesar/encrypt" method="post">
     <input autocomplete="off" type="text" name="input_text" placeholder="Enter text to encrypt" required>
-    <input type="number" name="input_rot" min="0" max="25" required>
-    <button type="submit">Encrypt my text</button>
+    <input type="number" name="input_rot" min=-1000 max=1000 required>
+    <button type="submit">Encrypt my text!</button>
 </form>
 
 {% if encrypted_text %}
@@ -17,4 +17,14 @@
 {% endif %}
 
 <h1 style="text-align:center"> Caesar Cipher Decryption</h1>
+<form action="/caesar/decrypt" method="post">
+    <input autocomplete="off" type="text" name="input_text" placeholder="Enter text to encrypt" required>
+    <button type="submit">Decrypt my text!</button>
+</form>
+
+{% if decrypted_text %}
+  <p> Decrypted Text: {{ decrypted_text }} </p>
+{% endif %}
+
+
 {% endblock %}
