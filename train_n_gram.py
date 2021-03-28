@@ -7,7 +7,7 @@ import sqlite3
 def to_ids(text, n_val):
     start_tokens       = (n_val-1) * [26]
     text_letter_tokens = [ord(letter) - 97 for letter in text]
-    end_tokens         = (n_val-1) * [27]
+    end_tokens         = [27]
     return start_tokens + text_letter_tokens + end_tokens
 
 
@@ -33,7 +33,7 @@ with open('data/unigram_freq.csv', newline='') as f:
 for word, freq in parsed_csv:
     word_ids = to_ids(word, n)
 
-    for i in range(0, len(word) + n - 1):
+    for i in range(0, len(word) + 1):
         this_ids = tuple(word_ids[i:i+n])
         n_grams[this_ids] = n_grams.get(this_ids, 0) + int(freq)
 
@@ -63,7 +63,7 @@ cursor = conn.cursor()
 
 for letters, frequency in n_grams.items():
     letter1, letter2, letter3, letter4, letter5 = letters
-    insert_n_gram = "INSERT INTO frequencies (letter1, letter2, letter3, letter4, letter5, frequency) values (?, ?, ?, ?, ?, ?)"
+    insert_n_gram = "INSERT INTO frequencies (letter1, letter2, letter3, letter4, letter5, frequency) VALUES (?, ?, ?, ?, ?, ?)"
     cursor.execute(insert_n_gram, (letter1, letter2, letter3, letter4, letter5, frequency))
 
 conn.commit()

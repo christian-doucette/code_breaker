@@ -8,8 +8,6 @@ import sqlite3
 # My code files
 import encrypt      # encryption functions for caesar, substitution and vignere
 import test_n_gram  # decryption functions for caesar and substitution
-import db           # database functions
-
 
 
 app = Flask(__name__)
