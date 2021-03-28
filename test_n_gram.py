@@ -24,7 +24,6 @@ def calculate_score(text: str, n: int, cur):
     for word in text_words:
         #print(f"word: {word}")
         letter_ids = to_ids_uppercase(word, n)
-        print(letter_ids)
         #print(f"ids: {letter_ids}")
 
         for i in range(0, len(word) + 1):
@@ -114,7 +113,7 @@ def get_ext_order(cipher_text: str, n: int):
 
 # implentation of beam search algorithm from this paper: https://www.aclweb.org/anthology/P13-1154.pdf
 # assumes text only includes uppercase letters and spaces
-def break_substitution(cipher_text: str, n: int, n_keep: int = 4) -> str:
+def break_substitution(cipher_text: str, n: int, n_keep: int = 10) -> str:
     conn = sqlite3.connect('frequencies_database.db')
     cur  = conn.cursor()
 
@@ -156,9 +155,16 @@ def break_substitution(cipher_text: str, n: int, n_keep: int = 4) -> str:
         H_t.sort(key = lambda func_score: -func_score[1])
         H_t = H_t[0:n_keep]
 
+
+
         # preparing for next cycle
         H_s = H_t
         H_t = []
+
+        for substitution, substitution_score in H_s:
+            print(f"\n\nPossibility at step {cardinality}:")
+            print(encrypt.encrypt_substitution_partial(cipher_text, substitution))
+
         #print(f'H_s at end of step {cardinality}: {H_s}')
 
         cardinality += 1
@@ -166,6 +172,7 @@ def break_substitution(cipher_text: str, n: int, n_keep: int = 4) -> str:
 
     best_substitution, best_substitution_score = H_s[0]
     return encrypt.encrypt_substitution(cipher_text, best_substitution)
+
 
 
 
