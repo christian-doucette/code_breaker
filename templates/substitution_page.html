@@ -27,6 +27,7 @@
 
   <div class="form-group">
     <label for="input_substitution">Substitution (enter as a permutation of the alphabet)</label>
+    <button type="button" onclick="fill_in_form_with_alphabet_permutation()" class="btn btn-secondary btn-sm">Random Substitution</button>
     <input type="text" class="form-control" id="input_substitution" name="input_substitution" placeholder="For example, MNBVCXZASDFGHJKLTREWQYUIOP" autocomplete="off">
   </div>
 
@@ -56,4 +57,34 @@
 
 <p>Since a Substitution cipher...
 </p>
+
+
+
+<script>
+
+// Returns a random permutation of the alphabet, using Fisher-Yates Shuffle Algorithm
+function get_random_alphabet_permutation () {
+  let nonchosen_letters = Array.from("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+  let chosen_letters    = [];
+
+
+  for (i = 0; i < 26; i++) {
+    const chosen_index = Math.floor(Math.random() * (26 - i));
+    chosen_letters.push(nonchosen_letters[chosen_index]);
+    nonchosen_letters.splice(chosen_index, 1);
+  }
+
+  return chosen_letters.join('');
+}
+
+
+
+function fill_in_form_with_alphabet_permutation() {
+  alphabet_permutation_textbox = document.getElementById('input_substitution');
+  alphabet_permutation_textbox.value = get_random_alphabet_permutation();
+}
+
+
+
+</script>
 {% endblock %}
