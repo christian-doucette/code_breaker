@@ -6,5 +6,16 @@
 {% block content %}
 <h1 class="mb-5" style="text-align:center">Code Breaker</h1>
 
-Code breaker is a web application with encryption function for Caesar, Substitution, and Vignere ciphers. Additionally, it has decryption functions for Caesar and Substitution ciphers using techniques from NLP. It is currently in progress, check back when it is more complete!
+Code Breaker is a web application with encryption functions for ciphers, and automatic decryption functions for some of them. Currently, it includes encryption for:
+  <ol>
+    <li>Caesar cipher</li>
+    <li>Substitution cipher</li>
+    <li>Vignere cipher</li>
+  </ol>
+  And, it has decryption functions for:
+  <ol>
+    <li>Caesar cipher</li>
+    <li>Substitution cipher (although this one still needs some work)</li>
+  </ol>
+  The decryption functions use an n-gram model, a simple language model from NLP. For more details on these, check out the pages for each cipher.
 {% endblock %}

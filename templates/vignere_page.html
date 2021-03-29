@@ -6,18 +6,12 @@
 {% block content %}
 
 <h1 class="mb-5" style="text-align:center">Vignere Cipher</h1>
-<p>The Vignere cipher is another cipher, will put description here.
-   In order for decryption to work, the input text must:
-   <ol>
-    <li>Be standard English text (but proper nouns are okay)</li>
-    <li>Be relatively long (~300 characters)</li>
-    <li>Use just letters and spaces. If you input anything else (numbers, special characters, etc.), it will be ignored</li>
-  </ol>
+<p>The <i>Vignere cipher</i> is a cipher that encrypts using a <i>keyword</i>. It rotates each letter by the index of the letter of the keyword, repeating it as many times as necessary. I don't have an automatic decryption method for this yet, but I may attempt one.
 </p>
 
 
 
-<h2 style="text-align:center">Vignere Cipher Encryption</h2>
+<h2 class="mt-5" style="text-align:center">Vignere Cipher Encryption</h2>
 
 <form action="/vignere/encrypt" method="post">
   <div class="form-group">
@@ -38,7 +32,4 @@
 {% endif %}
 
 
-
-<p>Since a Vignere cipher...
-</p>
 {% endblock %}

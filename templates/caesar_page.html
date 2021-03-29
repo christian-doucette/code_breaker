@@ -6,7 +6,7 @@
 {% block content %}
 
 <h1 class="mb-5" style="text-align:center">Caesar Cipher</h1>
-<p>The Caesar cipher is a simple cipher that just involves rotating all the letters of the alphabet by some fixed number, called the <i>rotation</i>.
+<p>The <i>Caesar cipher</i> is a simple cipher that just rotates all the letters of the alphabet by some fixed number, called the <i>rotation</i>.
    In order for decryption to work, the input text must:
    <ol>
     <li>Be standard English text (but proper nouns are okay)</li>
@@ -16,7 +16,7 @@
 
 
 
-<h2 style="text-align:center">Caesar Cipher Encryption</h2>
+<h2 class="mt-5" style="text-align:center">Caesar Cipher Encryption</h2>
 
 <form action="/caesar/encrypt" method="post">
   <div class="form-group">
@@ -34,7 +34,7 @@
   <p> Encrypted Text: </p> <p> {{ encrypted_text }} </p>
 {% endif %}
 
-<h2 style="text-align:center">Caesar Cipher Decryption</h2>
+<h2 class="mt-5" style="text-align:center">Caesar Cipher Decryption</h2>
 
 
 <form action="/caesar/decrypt" method="post">
@@ -52,8 +52,8 @@
 {% endif %}
 
 <p>Since a Caesar cipher encryption is just some rotation of the alphabet, there are only 26 possibilities, so my decryption method can just check them all by brute force.
-  The only tricky part here is that it must decide which of the possible decriptions looks the most correct. A human could do this just by looking at them, but its a little tricker for a computer.
-  To accomplish this, I use a tool from NLP: a simple language model called n-gram.
-  It is trained on common English words, and can calculate a score for any sequence of letters, which tells how similar that sequence is to regular English.
+  The difficulty here is that it must decide which of the possible decriptions looks the most correct. A human could do this just by looking at them and using intuition, but its a little tricker for a computer.
+  To solve this, I use a tool from NLP: a simple language model called n-gram.
+  It is trained on common English words, and can calculate a score for any sequence of letters, which tells how similar that sequence is to regular English. With this tool, I just return the rotation to which my language model assigns the highest score.
 </p>
 {% endblock %}
