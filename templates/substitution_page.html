@@ -6,7 +6,7 @@
 {% block content %}
 
 <h1 class="mb-5" style="text-align:center">Substitution Cipher</h1>
-<p>The <i>substitution cipher</i> maps every letter in the alphabet to a unique other letter. 
+<p>The <i>substitution cipher</i> maps every letter in the alphabet to a unique other letter.
    In order for decryption to work, the input text must:
    <ol>
     <li>Be standard English text (but proper nouns are okay)</li>
@@ -19,7 +19,7 @@
 
 <h2 class="mt-5" style="text-align:center">Substitution Cipher Encryption</h2>
 
-<form action="/substitution/encrypt" method="post">
+<form action="/substitution/encrypt" method="get">
   <div class="form-group">
     <label for="input_text">Plaintext</label>
     <textarea class="form-control" rows="3" id="input_text" name="input_text" placeholder="Enter text to encrypt" autocomplete="off"></textarea>
@@ -41,7 +41,7 @@
 <h2 class="mt-5" style="text-align:center">Substitution Cipher Decryption</h2>
 
 
-<form action="/substitution/decrypt" method="post">
+<form action="/substitution/decrypt" method="get">
   <div class="form-group">
     <label for="input_text">Ciphertext</label>
     <textarea class="form-control" rows="3" id="input_text" name="input_text" placeholder="Enter text to decrypt" autocomplete="off"></textarea>

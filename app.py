@@ -40,8 +40,8 @@ def caesar_page():
 @app.route('/caesar/encrypt/', methods=['GET', 'POST'])
 def caesar_encrypt_input():
     # Gets data from form
-    input_text = request.form['input_text']
-    input_rot  = int(request.form['input_rot'])
+    input_text = request.args['input_text']
+    input_rot  = int(request.args['input_rot'])
 
     # runs encryption function
     encrypted_text = encrypt.encrypt_caesar(input_text, input_rot)
@@ -53,7 +53,7 @@ def caesar_encrypt_input():
 @app.route('/caesar/decrypt/', methods=['GET', 'POST'])
 def caesar_decrypt_input():
     # Gets data from form
-    input_text = request.form['input_text']
+    input_text = request.args['input_text']
 
     # runs decryption function
     decrypted_text = test_n_gram.break_caesar(input_text, 5)
@@ -76,8 +76,8 @@ def substitution_page():
 @app.route('/substitution/encrypt/', methods=['GET', 'POST'])
 def substitution_encrypt_input():
     # Gets data from form
-    input_text          = request.form['input_text']
-    input_substitution  = request.form['input_substitution']
+    input_text          = request.args['input_text']
+    input_substitution  = request.args['input_substitution']
     substitution_func = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ"[i]: input_substitution[i] for i in range(26)}
 
     # runs encryption function
@@ -90,7 +90,7 @@ def substitution_encrypt_input():
 @app.route('/substitution/decrypt/', methods=['GET', 'POST'])
 def substitution_decrypt_input():
     # Gets data from form
-    input_text    = request.form['input_text']
+    input_text    = request.args['input_text']
 
     # runs decryption function
     decrypted_text = test_n_gram.break_substitution(input_text, 5)
@@ -114,8 +114,8 @@ def vignere_page():
 @app.route('/vignere/encrypt/', methods=['GET', 'POST'])
 def vignere_encrypt_input():
     # Gets data from form
-    input_text     = request.form['input_text']
-    input_keyword  = request.form['input_keyword']
+    input_text     = request.args['input_text']
+    input_keyword  = request.args['input_keyword']
 
     # runs encryption function
     encrypted_text = encrypt.encrypt_vignere(input_text, input_keyword)
