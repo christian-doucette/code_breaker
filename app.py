@@ -37,7 +37,7 @@ def caesar_page():
 
 
 # Loads the Caesar Cipher Page, when the user has entered text to be encrypted
-@app.route('/caesar/encrypt/', methods=['GET', 'POST'])
+@app.route('/caesar/encrypt/')
 def caesar_encrypt_input():
     # Gets data from form
     input_text = request.args['input_text']
@@ -50,7 +50,7 @@ def caesar_encrypt_input():
 
 
 # Loads the Caesar Cipher Page, when the user has entered text to be decrypted
-@app.route('/caesar/decrypt/', methods=['GET', 'POST'])
+@app.route('/caesar/decrypt/')
 def caesar_decrypt_input():
     # Gets data from form
     input_text = request.args['input_text']
@@ -73,7 +73,7 @@ def substitution_page():
 
 
 # Loads the Substitution Cipher Page, when the user has entered text to be encrypted
-@app.route('/substitution/encrypt/', methods=['GET', 'POST'])
+@app.route('/substitution/encrypt/')
 def substitution_encrypt_input():
     # Gets data from form
     input_text          = request.args['input_text']
@@ -87,7 +87,7 @@ def substitution_encrypt_input():
 
 
 # Loads the Substitution Cipher Page, when the user has entered text to be encrypted
-@app.route('/substitution/decrypt/', methods=['GET', 'POST'])
+@app.route('/substitution/decrypt/')
 def substitution_decrypt_input():
     # Gets data from form
     input_text    = request.args['input_text']
@@ -111,7 +111,7 @@ def vignere_page():
 
 
 # Loads the Vignere Cipher Page, when the user has entered text to be encrypted
-@app.route('/vignere/encrypt/', methods=['GET', 'POST'])
+@app.route('/vignere/encrypt/')
 def vignere_encrypt_input():
     # Gets data from form
     input_text     = request.args['input_text']
