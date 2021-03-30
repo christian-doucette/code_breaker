@@ -2,6 +2,7 @@ import math
 import json
 import encrypt
 import sqlite3
+#from datetime import datetime
 
 
 # gets the ids for a word
@@ -30,7 +31,7 @@ def calculate_score(text: str, n: int, cur):
             letter1, letter2, letter3, letter4, letter5 = tuple(letter_ids[i:i+5])
             #cur.execute("SELECT * FROM frequencies WHERE letter1 = 18 AND letter2 = 19 AND letter3 = 20 AND letter4 = 3 AND letter5 = 4")
             if not all(map(lambda x: 0 <= x and x < 28, letter_ids[i:i+5])):
-                perplexity_log += math.log(.000001, 10)
+                perplexity_log += math.log(0.0001, 10)
 
             else:
                 rows = cur.execute("SELECT frequency FROM frequencies WHERE letter1 = ? AND letter2 = ? AND letter3 = ? AND letter4 = ? AND letter5 = ?", (letter1, letter2, letter3, letter4, letter5)).fetchall()
@@ -39,12 +40,38 @@ def calculate_score(text: str, n: int, cur):
                 else:
                     letter_ids_freq = rows[0][0]
 
-                perplexity_log += math.log(letter_ids_freq + .000001, 10)
+                perplexity_log += math.log(letter_ids_freq + 0.0001, 10)
 
     return perplexity_log
 
 
-calculate_score("THI_ I_ _OME TE_T TEXT", 5, sqlite3.connect('frequencies_database.db').cursor())
+
+# Updates score based off the addition of a new letter
+def calculate_score_diff(text: str, n: int, cur, new_letter):
+    score_diff = 0
+    new_letter_id = ord(new_letter) - 65
+
+    text_words = text.split()
+    for word in text_words:
+        #print(f"word: {word}")
+        letter_ids = to_ids_uppercase(word, n)
+        #print(f"ids: {letter_ids}")
+
+        for i in range(0, len(word) + 1):
+            letter1, letter2, letter3, letter4, letter5 = tuple(letter_ids[i:i+5])
+            #cur.execute("SELECT * FROM frequencies WHERE letter1 = 18 AND letter2 = 19 AND letter3 = 20 AND letter4 = 3 AND letter5 = 4")
+            if all(map(lambda x: 0 <= x and x < 28, letter_ids[i:i+5])) and any(map(lambda x: x==new_letter_id, letter_ids[i:i+5])):
+                rows = cur.execute("SELECT frequency FROM frequencies WHERE letter1 = ? AND letter2 = ? AND letter3 = ? AND letter4 = ? AND letter5 = ?", (letter1, letter2, letter3, letter4, letter5)).fetchall()
+                if len(rows) == 0:
+                    letter_ids_freq = 0
+                else:
+                    letter_ids_freq = rows[0][0]
+
+                score_diff += math.log(letter_ids_freq + 0.0001, 10)
+
+    return score_diff
+
+
 
 # finds and returns rotation of cipher text with best perplexity value
 # assumes text only includes uppercase letters and spaces
@@ -99,8 +126,6 @@ def get_ext_order(cipher_text: str, n: int):
                                 num_grams_for_this_letter += 1
 
 
-
-
                     if max_letter_num_grams < num_grams_for_this_letter:
                         max_letter_num_grams = num_grams_for_this_letter
                         max_letter           = alphabet_letter
@@ -113,7 +138,8 @@ def get_ext_order(cipher_text: str, n: int):
 
 # implentation of beam search algorithm from this paper: https://www.aclweb.org/anthology/P13-1154.pdf
 # assumes text only includes uppercase letters and spaces
-def break_substitution(cipher_text: str, n: int, n_keep: int = 10) -> str:
+def break_substitution(cipher_text: str, n: int, n_keep: int = 5) -> str:
+    #start_time = datetime.now()
     conn = sqlite3.connect('frequencies_database.db')
     cur  = conn.cursor()
 
@@ -145,8 +171,9 @@ def break_substitution(cipher_text: str, n: int, n_keep: int = 10) -> str:
 
 
 
-                    # currently recalculating score, but would be easier to only add the new ones
-                    partial_func_with_extra_letter_score = calculate_score(encrypt.encrypt_substitution_partial(cipher_text, partial_func_with_extra_letter), 5, cur)
+                    # calculates score for the new function
+                    encrypted_text = encrypt.encrypt_substitution_partial(cipher_text, partial_func_with_extra_letter)
+                    partial_func_with_extra_letter_score = partial_func_score + calculate_score_diff(encrypted_text, 5, cur, plaintext_letter_to_try)
 
                     H_t.append((partial_func_with_extra_letter, partial_func_with_extra_letter_score))
 
@@ -162,15 +189,15 @@ def break_substitution(cipher_text: str, n: int, n_keep: int = 10) -> str:
         H_t = []
 
         for substitution, substitution_score in H_s:
-            print(f"\n\nPossibility at step {cardinality}:")
-            print(encrypt.encrypt_substitution_partial(cipher_text, substitution))
-
-        #print(f'H_s at end of step {cardinality}: {H_s}')
+            pass
+            #print(f"Score at step {cardinality}: {substitution_score + -4899.99999999999854}")
+            #print(encrypt.encrypt_substitution_partial(cipher_text, substitution))
 
         cardinality += 1
 
 
     best_substitution, best_substitution_score = H_s[0]
+    #print(f"Time to calculate decryption: {datetime.now() - start_time}\n\n")
     return encrypt.encrypt_substitution(cipher_text, best_substitution)
 
 
@@ -185,11 +212,23 @@ def break_substitution(cipher_text: str, n: int, n_keep: int = 10) -> str:
 
 # gets n_val for n gram - getting from model metadata
 # should raise error here if its not a tuple, although that should never happen
-n_val = 5 #len(eval(next(iter(n_grams))))
-#print(f'n_val: {n_val}')
+"""
+long_start_time = datetime.now()
+#long_plaintext = "PA QB EMCO HAF RMLB PA RMLB M LBOH RCVR CS PA FUWBODPMUW OCNX MUW ZAOPH PRB RFZAO CD BKPOBZBYH DFQPYB MUW GCPRAFP M DAYCW VOMDI AE PRBAOBPCNMY IRHDCND ZADP AE PRB TAXBD GCYY VA ALBO M PHICNMY LCBGBOD RBMW PRBOBD MYDA OCNXD UCRCYCDPCN AFPYAAX GRCNR CD WBEPYH GALBU CUPA RCD NRMOMNPBOCDMPCAU  RCD IBODAUMY IRCYADAIRH WOMGD RBMLCYH EOAZ UMOAWUMHM LAYHM YCPBOMPFOB EAO CUDPMUNB PRB EMUD FUWBODPMUW PRCD DPFEE PRBH RMLB PRB CUPBYYBNPFMY NMIMNCPH PA POFYH MIIOBNCMPB PRB WBIPRD AE PRBDB TAXBD PA OBMYCJB PRMP PRBHOB UAP TFDP EFUUH PRBH DMH DAZBPRCUV WBBI MQAFP YCEB MD M NAUDBSFBUNB IBAIYB GRA WCDYCXB OCNX MUW ZAOPH POFYH MOB CWCAPD AE NAFODB PRBH GAFYWUP MIIOBNCMPB EAO CUDPMUNB PRB RFZAFO CU OCNXD BKCDPBUNCMY NMPNRIROMDB GFQQM YFQQM WFQ WFQ GRCNR CPDBYE CD M NOHIPCN OBEBOBUNB PA PFOVBUBLD OFDDCMU BICN EMPRBOD MUW DAUD CZ DZCOXCUV OCVRP UAG TFDP CZMVCUCUV AUB AE PRADB MWWYBIMPBW DCZIYBPAUD DNOMPNRCUV PRBCO RBMWD CU NAUEFDCAU MD WMU RMOZAUD VBUCFD FUEAYWD CPDBYE AU PRBCO PBYBLCDCAU DNOBBUD GRMP EAAYD RAG C ICPH PRBZ MUW HBD QH PRB GMH C WA RMLB M OCNX MUW ZAOPH PMPPAA MUW UA HAF NMUUAP DBB CP CPD EAO PRB YMWCBD BHBD AUYH MUW BLBU PRBH RMLB PA WBZAUDPOMPB PRMP PRBHOB GCPRCU CS IACUPD AE ZH AGU IOBEBOMQYH YAGBO QBEAOBRMUW"
 
-#letters = "PA QB EMCO HAF RMLB PA RMLB M LBOH RCVR CS PA FUWBODPMUW OCNX MUW ZAOPH PRB RFZAO CD BKPOBZBYH DFQPYB MUW GCPRAFP M DAYCW VOMDI AE PRBAOBPCNMY IRHDCND ZADP AE PRB TAXBD GCYY VA ALBO M PHICNMY LCBGBOD RBMW PRBOBD MYDA OCNXD UCRCYCDPCN AFPYAAX GRCNR CD WBEPYH GALBU CUPA RCD NRMOMNPBOCDMPCAU  RCD IBODAUMY IRCYADAIRH WOMGD RBMLCYH EOAZ UMOAWUMHM LAYHM YCPBOMPFOB EAO CUDPMUNB PRB EMUD FUWBODPMUW PRCD DPFEE PRBH RMLB PRB CUPBYYBNPFMY NMIMNCPH PA POFYH MIIOBNCMPB PRB WBIPRD AE PRBDB TAXBD PA OBMYCJB PRMP PRBHOB UAP TFDP EFUUH PRBH DMH DAZBPRCUV WBBI MQAFP YCEB MD M NAUDBSFBUNB IBAIYB GRA WCDYCXB OCNX MUW ZAOPH POFYH MOB CWCAPD AE NAFODB PRBH GAFYWUP MIIOBNCMPB EAO CUDPMUNB PRB RFZAFO CU OCNXD BKCDPBUNCMY NMPNRIROMDB GFQQM YFQQM WFQ WFQ GRCNR CPDBYE CD M NOHIPCN OBEBOBUNB PA PFOVBUBLD OFDDCMU BICN EMPRBOD MUW DAUD CZ DZCOXCUV OCVRP UAG TFDP CZMVCUCUV AUB AE PRADB MWWYBIMPBW DCZIYBPAUD DNOMPNRCUV PRBCO RBMWD CU NAUEFDCAU MD WMU RMOZAUD VBUCFD FUEAYWD CPDBYE AU PRBCO PBYBLCDCAU DNOBBUD GRMP EAAYD RAG C ICPH PRBZ MUW HBD QH PRB GMH C WA RMLB M OCNX MUW ZAOPH PMPPAA MUW UA HAF NMUUAP DBB CP CPD EAO PRB YMWCBD BHBD AUYH MUW BLBU PRBH RMLB PA WBZAUDPOMPB PRMP PRBHOB GCPRCU CS IACUPD AE ZH AGU IOBEBOMQYH YAGBO QBEAOBRMUW"
-my_cipher_text = encrypt.encrypt_substitution("I GOT A LETTER THIS MORNING WHAT DO YOU RECKON IT READ I READ IT AND IT SAID THE GIRL YOU LOVE IS DEAD WHEN I HEAR MY NAME I WANT TO DISAPPEAR YES IM BUSTED BUT MY HEART WONT LET ME DIE WHEN I FEEL ALRIGHT DARLING WONT YOU COME AROUND", encrypt.get_random_substitution())
+long_ciphertext = encrypt.encrypt_substitution(long_plaintext, encrypt.get_random_substitution())
+print(break_substitution(long_ciphertext, 5))
+print(f"Time to calculate decrypt long: {datetime.now() - long_start_time}\n\n")
+
+
+short_start_time = datetime.now()
+short_plaintext = "WG EGI JZZB IFZ UNURUAIZM RGT GX DGLM XMOZEWAFOB AZUNZW LB LEION DGLM XMOZEWA UMZ WZUW XONN IFZOM NOQZA COIF ACZZIEZAA ABZUJ UBBMGQOEP SFZZMOEP CGMWA CFONZ IFZOM ZUMA SUE FZUM IFZY UEW CFONZ IFZOM FZUMIA SUE RZ IFMONNZW UEW YUWZ FUBBOZM IFZ JOEW GX IFOEPA DGL YZUE IG AUD CFZE IFZD UMZ PGEZ AUD RZXGMZ IFZD PG"
+short_ciphertext = encrypt.encrypt_substitution(short_plaintext, encrypt.get_random_substitution())
+print(break_substitution(short_ciphertext, 5))
+print(f"Time to calculate decrypt short: {datetime.now() - short_start_time}\n\n")
+"""
+
+
 #print(my_cipher_text)
 #print(break_substitution("IA TK MIMFL OIJK JKFLUBYUDOR ZOUNHIFS LCK TIOM SYXL GR LCK GKXBM XFM LBKWGOIFS YJKB ZBKNIZINKD TK DCYUOM FKJKB GK IA TK MIMFL OIJK JKFLUBYUDOR ZOUNHIFS LCK TIOM SYXL GR LCK GKXBM XFM LBKWGOIFS YJKB ZBKNIZINKD TK DCYUOM FKJKB GK MKZBKDDKM IJK FY MYUGL GUL XOBKXMR DCYUOM GK AXMKM AXLXOIDLIN XFM XSKM JIBSIFIX TYYOA MKZBKDDKM IJK FY MYUGL GUL XOBKXMR DCYUOM GK AXMKM AXLXOIDLIN XFM XSKM JIBSIFIX TYYOA", 5))
 #print(break_substitution("B TWD Y OFDDFV DABI XWVUBUT NAYD ZW CWS VFJGWU BD VFYZ B VFYZ BD YUZ BD IYBZ DAF TBVO CWS OWEF BI ZFYZ NAFU B AFYV XC UYXF B NYUD DW ZBIYHHFYV CFI BX PSIDFZ PSD XC AFYVD NWUD OFD XF ZBF NAFU B LFFO YOVBTAD ZYVOBUT NWUD CWS JWXF YVWSUZ", 5))
