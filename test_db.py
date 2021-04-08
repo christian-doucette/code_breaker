@@ -2,16 +2,6 @@ import sqlite3
 
 
 
-
-def create_db_schema():
-        conn = sqlite3.connect('frequencies_database.db')
-
-        print("Creating database in frequencies_database.db, with script in create_db.sql")
-        with open("create_db.sql", "r") as f:
-            conn.executescript(f.read())
-        print("Database schema created successfully!")
-
-
 def test_db():
         conn = sqlite3.connect('frequencies_database.db')
         cur  = conn.cursor()
