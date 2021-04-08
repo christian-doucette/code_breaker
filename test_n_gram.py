@@ -77,7 +77,7 @@ def calculate_score_diff(text: str, n: int, cur, new_letter):
 # assumes text only includes uppercase letters and spaces
 def break_caesar(cipher_text: str, n: int) -> str:
     # Gets database connection and cursor
-    conn = sqlite3.connect('frequencies_database.db')
+    conn = sqlite3.connect('trained_model/frequencies_database.db')
     cur  = conn.cursor()
 
     best_guess = cipher_text
@@ -140,7 +140,7 @@ def get_ext_order(cipher_text: str, n: int):
 # assumes text only includes uppercase letters and spaces
 def break_substitution(cipher_text: str, n: int, n_keep: int = 5) -> str:
     #start_time = datetime.now()
-    conn = sqlite3.connect('frequencies_database.db')
+    conn = sqlite3.connect('trained_model/frequencies_database.db')
     cur  = conn.cursor()
 
     # number of letters in the guesses so far
