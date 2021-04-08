@@ -17,22 +17,20 @@ def to_ids(text, n_val):
 # runs the sql code in create_db.sql
 # this drops and recreates the frequencies table
 def recreate_database(db_conn):
-        print("Creating database in frequencies_database.db, with script in create_db.sql")
         with open("create_db.sql", "r") as f:
             db_conn.executescript(f.read())
-        print("Database schema created successfully!")
 
 
 
 
 # trains n-gram on training data
 # returns dictionary containing frequencies
-def train_n_gram_from_file(data_filepathn):
+def train_n_gram_from_file(data_filepath):
     n = 5            # number of letters being used in n-gram for prediction
     num_symbols = 28 # total number of symbols, 26 letters + start token (26) + end token (27)
-    n_grams = dict()
+    n_gram = dict()
 
-    with open(, newline='') as f:
+    with open(data_filepath, newline='') as f:
         reader = csv.reader(f)
         parsed_csv = list(reader)[1:]
 
@@ -42,7 +40,7 @@ def train_n_gram_from_file(data_filepathn):
 
         for i in range(0, len(word) + 1):
             this_ids = tuple(word_ids[i:i+n])
-            n_grams[this_ids] = n_grams.get(this_ids, 0) + int(freq)
+            n_gram[this_ids] = n_gram.get(this_ids, 0) + int(freq)
 
 
     # counts up frequencies and stores in n_gram dictionary
@@ -53,14 +51,17 @@ def train_n_gram_from_file(data_filepathn):
                     total_for_prefix = 0
                     for e in range(num_symbols):
                         this_key = (a,b,c,d,e)
-                        total_for_prefix += n_grams.get(this_key, 0)
+                        total_for_prefix += n_gram.get(this_key, 0)
 
                     # divides by number of prefixes (sets of 4 letters)
                     # so frequencies table will hold probability for a letter given a prefix
                     for e in range(num_symbols):
                         this_key = (a,b,c,d,e)
-                        if this_key in n_grams:
-                            n_grams[this_key] = n_grams[this_key] / total_for_prefix
+                        if this_key in n_gram:
+                            n_gram[this_key] = n_gram[this_key] / total_for_prefix
+
+    # returns trained n_gram
+    return n_gram
 
 
 
@@ -68,11 +69,12 @@ def train_n_gram_from_file(data_filepathn):
 def save_n_gram_to_database(db_conn, n_gram):
     # gets cursor from database connection
     cursor = db_conn.cursor()
+    sql_insert_frequency = "INSERT INTO frequencies (letter1, letter2, letter3, letter4, letter5, frequency) VALUES (?, ?, ?, ?, ?, ?)"
 
-    for letters, frequency in n_grams.items():
+    # inserts each frequency into database
+    for letters, frequency in n_gram.items():
         letter1, letter2, letter3, letter4, letter5 = letters
-        insert_n_gram = "INSERT INTO frequencies (letter1, letter2, letter3, letter4, letter5, frequency) VALUES (?, ?, ?, ?, ?, ?)"
-        cursor.execute(insert_n_gram, (letter1, letter2, letter3, letter4, letter5, frequency))
+        cursor.execute(sql_insert_frequency, (letter1, letter2, letter3, letter4, letter5, frequency))
 
 
 
@@ -86,15 +88,18 @@ def save_n_gram_to_database(db_conn, n_gram):
 
 # trains n_gram model from file, and saves in dictionary
 n_gram_model = train_n_gram_from_file('data/unigram_freq.csv')
+print("Successfully trained n gram model")
 
 # connects to sqlite database
 conn = sqlite3.connect('frequencies_database.db')
 
 # drops and recreates frequencies database table
 recreate_database(conn)
+print("Successfully recreated frequencies database")
 
 # adds all n-gram frequencies from dictionary to database
 save_n_gram_to_database(conn, n_gram_model)
+print("Successfully saved n gram model to database")
 
 
 # commits transaction and closes connection
