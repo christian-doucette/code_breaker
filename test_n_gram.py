@@ -2,7 +2,7 @@ import math
 import json
 import encrypt
 import sqlite3
-#from datetime import datetime
+from datetime import datetime
 
 
 # gets the ids for a word
@@ -57,17 +57,39 @@ def calculate_score_diff(text: str, n: int, cur, new_letter):
         letter_ids = to_ids_uppercase(word, n)
         #print(f"ids: {letter_ids}")
 
+
+        newly_available_rows = []
         for i in range(0, len(word) + 1):
-            letter1, letter2, letter3, letter4, letter5 = tuple(letter_ids[i:i+5])
+            #letter1, letter2, letter3, letter4, letter5 = tuple(letter_ids[i:i+5])
             #cur.execute("SELECT * FROM frequencies WHERE letter1 = 18 AND letter2 = 19 AND letter3 = 20 AND letter4 = 3 AND letter5 = 4")
             if all(map(lambda x: 0 <= x and x < 28, letter_ids[i:i+5])) and any(map(lambda x: x==new_letter_id, letter_ids[i:i+5])):
-                rows = cur.execute("SELECT frequency FROM frequencies WHERE letter1 = ? AND letter2 = ? AND letter3 = ? AND letter4 = ? AND letter5 = ?", (letter1, letter2, letter3, letter4, letter5)).fetchall()
-                if len(rows) == 0:
-                    letter_ids_freq = 0
-                else:
-                    letter_ids_freq = rows[0][0]
+                newly_available_rows.extend(letter_ids[i:i+5])
 
-                score_diff += math.log(letter_ids_freq + 0.0001, 10)
+                #if len(rows) == 0:
+                #    letter_ids_freq = 0
+                #else:
+                #    letter_ids_freq = rows[0][0]
+
+                #score_diff += math.log(letter_ids_freq + 0.0001, 10)
+
+
+        if len(newly_available_rows) != 0:
+            # formats query string
+            num_repeats = len(newly_available_rows) // 5
+            repeated_string  = "(letter1 = ? AND letter2 = ? AND letter3 = ? AND letter4 = ? AND letter5 = ?)"
+            repeated_strings = num_repeats * [repeated_string]
+            query_string = "SELECT frequency FROM frequencies WHERE " + ' OR '.join(repeated_strings)
+
+            # executes query
+            rows = cur.execute(query_string, tuple(newly_available_rows))
+
+            # increases
+            for row in rows:
+                freq = row[0]
+                score_diff += math.log(freq + 1, 10)
+
+        #rows = cur.execute("SELECT frequency FROM frequencies WHERE letter1 = ? AND letter2 = ? AND letter3 = ? AND letter4 = ? AND letter5 = ?", (letter1, letter2, letter3, letter4, letter5)).fetchall()
+
 
     return score_diff
 
@@ -212,9 +234,9 @@ def break_substitution(cipher_text: str, n: int, n_keep: int = 5) -> str:
 
 # gets n_val for n gram - getting from model metadata
 # should raise error here if its not a tuple, although that should never happen
-"""
+
 long_start_time = datetime.now()
-#long_plaintext = "PA QB EMCO HAF RMLB PA RMLB M LBOH RCVR CS PA FUWBODPMUW OCNX MUW ZAOPH PRB RFZAO CD BKPOBZBYH DFQPYB MUW GCPRAFP M DAYCW VOMDI AE PRBAOBPCNMY IRHDCND ZADP AE PRB TAXBD GCYY VA ALBO M PHICNMY LCBGBOD RBMW PRBOBD MYDA OCNXD UCRCYCDPCN AFPYAAX GRCNR CD WBEPYH GALBU CUPA RCD NRMOMNPBOCDMPCAU  RCD IBODAUMY IRCYADAIRH WOMGD RBMLCYH EOAZ UMOAWUMHM LAYHM YCPBOMPFOB EAO CUDPMUNB PRB EMUD FUWBODPMUW PRCD DPFEE PRBH RMLB PRB CUPBYYBNPFMY NMIMNCPH PA POFYH MIIOBNCMPB PRB WBIPRD AE PRBDB TAXBD PA OBMYCJB PRMP PRBHOB UAP TFDP EFUUH PRBH DMH DAZBPRCUV WBBI MQAFP YCEB MD M NAUDBSFBUNB IBAIYB GRA WCDYCXB OCNX MUW ZAOPH POFYH MOB CWCAPD AE NAFODB PRBH GAFYWUP MIIOBNCMPB EAO CUDPMUNB PRB RFZAFO CU OCNXD BKCDPBUNCMY NMPNRIROMDB GFQQM YFQQM WFQ WFQ GRCNR CPDBYE CD M NOHIPCN OBEBOBUNB PA PFOVBUBLD OFDDCMU BICN EMPRBOD MUW DAUD CZ DZCOXCUV OCVRP UAG TFDP CZMVCUCUV AUB AE PRADB MWWYBIMPBW DCZIYBPAUD DNOMPNRCUV PRBCO RBMWD CU NAUEFDCAU MD WMU RMOZAUD VBUCFD FUEAYWD CPDBYE AU PRBCO PBYBLCDCAU DNOBBUD GRMP EAAYD RAG C ICPH PRBZ MUW HBD QH PRB GMH C WA RMLB M OCNX MUW ZAOPH PMPPAA MUW UA HAF NMUUAP DBB CP CPD EAO PRB YMWCBD BHBD AUYH MUW BLBU PRBH RMLB PA WBZAUDPOMPB PRMP PRBHOB GCPRCU CS IACUPD AE ZH AGU IOBEBOMQYH YAGBO QBEAOBRMUW"
+long_plaintext = "PA QB EMCO HAF RMLB PA RMLB M LBOH RCVR CS PA FUWBODPMUW OCNX MUW ZAOPH PRB RFZAO CD BKPOBZBYH DFQPYB MUW GCPRAFP M DAYCW VOMDI AE PRBAOBPCNMY IRHDCND ZADP AE PRB TAXBD GCYY VA ALBO M PHICNMY LCBGBOD RBMW PRBOBD MYDA OCNXD UCRCYCDPCN AFPYAAX GRCNR CD WBEPYH GALBU CUPA RCD NRMOMNPBOCDMPCAU  RCD IBODAUMY IRCYADAIRH WOMGD RBMLCYH EOAZ UMOAWUMHM LAYHM YCPBOMPFOB EAO CUDPMUNB PRB EMUD FUWBODPMUW PRCD DPFEE PRBH RMLB PRB CUPBYYBNPFMY NMIMNCPH PA POFYH MIIOBNCMPB PRB WBIPRD AE PRBDB TAXBD PA OBMYCJB PRMP PRBHOB UAP TFDP EFUUH PRBH DMH DAZBPRCUV WBBI MQAFP YCEB MD M NAUDBSFBUNB IBAIYB GRA WCDYCXB OCNX MUW ZAOPH POFYH MOB CWCAPD AE NAFODB PRBH GAFYWUP MIIOBNCMPB EAO CUDPMUNB PRB RFZAFO CU OCNXD BKCDPBUNCMY NMPNRIROMDB GFQQM YFQQM WFQ WFQ GRCNR CPDBYE CD M NOHIPCN OBEBOBUNB PA PFOVBUBLD OFDDCMU BICN EMPRBOD MUW DAUD CZ DZCOXCUV OCVRP UAG TFDP CZMVCUCUV AUB AE PRADB MWWYBIMPBW DCZIYBPAUD DNOMPNRCUV PRBCO RBMWD CU NAUEFDCAU MD WMU RMOZAUD VBUCFD FUEAYWD CPDBYE AU PRBCO PBYBLCDCAU DNOBBUD GRMP EAAYD RAG C ICPH PRBZ MUW HBD QH PRB GMH C WA RMLB M OCNX MUW ZAOPH PMPPAA MUW UA HAF NMUUAP DBB CP CPD EAO PRB YMWCBD BHBD AUYH MUW BLBU PRBH RMLB PA WBZAUDPOMPB PRMP PRBHOB GCPRCU CS IACUPD AE ZH AGU IOBEBOMQYH YAGBO QBEAOBRMUW"
 
 long_ciphertext = encrypt.encrypt_substitution(long_plaintext, encrypt.get_random_substitution())
 print(break_substitution(long_ciphertext, 5))
@@ -226,7 +248,7 @@ short_plaintext = "WG EGI JZZB IFZ UNURUAIZM RGT GX DGLM XMOZEWAFOB AZUNZW LB LE
 short_ciphertext = encrypt.encrypt_substitution(short_plaintext, encrypt.get_random_substitution())
 print(break_substitution(short_ciphertext, 5))
 print(f"Time to calculate decrypt short: {datetime.now() - short_start_time}\n\n")
-"""
+
 
 
 #print(my_cipher_text)
