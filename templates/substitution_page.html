@@ -55,7 +55,7 @@
   <p> Decrypted Text: </p> <p> {{ decrypted_text }} </p>
 {% endif %}
 
-<p>Since a substitution cipher is a permuation of the alphabet, there are 26! &thickapprox; 4.03 * 10<sup>26</sup> different possible decryptions. So, unlike in the case of the Caesar cipher, I cannot just check each one and return the best one. To solve this, I implemented the beam search algorithm from the paper <a href="https://www.aclweb.org/anthology/P13-1154.pdf
+<p>Since a substitution cipher is a permutation of the alphabet, there are 26! &thickapprox; 4.03 * 10<sup>26</sup> different possible decryptions. So, unlike in the case of the Caesar cipher, I cannot just check each one and return the best one. To solve this, I implemented the beam search algorithm from the paper <a href="https://www.aclweb.org/anthology/P13-1154.pdf
 ">"Beam Search for Solving Substitution Ciphers"</a> by Nuhn, Schamper and Ney. It iteratively builds up the solution letter by letter, keeping only the best partial solutions.
 </p>
 
