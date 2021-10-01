@@ -10,11 +10,11 @@ Code Breaker is a Flask web application with encryption functions for ciphers, a
 
 And, it includes decryption functions for:
 1. Caesar cipher
-2. Substitution cipher (although this one still needs some improvement)
+2. Substitution cipher
 
 &nbsp;  
 ## Decryption Techniques
-To decrypt, I use a simple language model called an *n-gram* model. It is trained on common English words, and is able to assign a score to any sequence of letter, which represents how similar that sequence is to standard English.
+To decrypt, I use a simple language model called an *n-gram* model. It is trained on common English words, and is able to assign a score to any sequence of letters, which represents how similar that sequence is to standard English.
 
 A Caesar cipher is a rotation of the alphabet, so there are only 26 possibilities for encryption. So, I just check each of these and return the one that my model scores the highest.
 
